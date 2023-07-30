@@ -45,7 +45,19 @@ export class TestComponent {
   }
 
   public PlaylistSubmit() {
-    var playlistID = this.getPlaylistLinkInput().includes('https://www.youtube.com/playlist?list=') ? this.loadPlaylistForm.controls.playlistLink.value.split('=')[1] : this.loadPlaylistForm.controls.playlistLink.value;
+
+    var rawUrl = this.getPlaylistLinkInput();
+    var playlistID!: string;
+
+    if (rawUrl.includes('https://www.youtube.com/playlist?list=')) {
+      playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
+    }
+    else if (rawUrl.includes('https://m.youtube.com/playlist?list=')) {
+      playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
+    } else {
+      playlistID = this.loadPlaylistForm.controls.playlistLink.value;
+    }
+
     this.isLoading = true;
 
     this.http.get<PlaylistDTO>(this.baseUrl + 'playlist/GetPlaylistFromYT?playlistID=' + playlistID).subscribe(result => {
