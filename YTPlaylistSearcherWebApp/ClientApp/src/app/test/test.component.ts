@@ -19,6 +19,7 @@ export class TestComponent {
   loadPlaylistForm!: FormGroup;
   resultSearchForm!: FormGroup;
   playlist!: PlaylistDTO;
+  playlistID!: string;
   videosToDisplay!: VideoDTO[];
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string, formBuilder: FormBuilder) {
@@ -47,19 +48,19 @@ export class TestComponent {
   public PlaylistSubmit() {
 
     var rawUrl = this.getPlaylistLinkInput();
-    var playlistID!: string;
+
 
     if (rawUrl.includes('https://www.youtube.com/playlist?list=')) {
-      playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
+      this.playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
     }
     else if (rawUrl.includes('https://m.youtube.com/playlist?list=')) {
-      playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
-    } 
+      this.playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
+    }
     else if (rawUrl.includes('playlist?list=')) {
-      playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
+      this.playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
     }
     else {
-      playlistID = this.loadPlaylistForm.controls.playlistLink.value;
+      this.playlistID = this.loadPlaylistForm.controls.playlistLink.value;
     }
 
     this.isLoading = true;
