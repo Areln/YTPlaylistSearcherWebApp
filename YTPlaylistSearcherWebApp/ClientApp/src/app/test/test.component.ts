@@ -53,7 +53,6 @@ export class TestComponent {
       this.videosToDisplay = this.playlist.videos;
       this.isLoading = false;
       this.errorMessage = null;
-      console.log(this.playlist);
     },
       error => {
         console.error(error);
