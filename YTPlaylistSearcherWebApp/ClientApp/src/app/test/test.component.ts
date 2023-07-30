@@ -28,7 +28,7 @@ export class TestComponent {
 
     this.loadPlaylistForm = formBuilder.group({
       //playlistLink: ['https://www.youtube.com/playlist?list=PLNL_Z6NDFLJZafBMO4kA9PbNBq0t-f9hx'],
-      playlistLink: ['https://www.youtube.com/playlist?list=PLNL_Z6NDFLJZafBMO4kA9PbNBq0t-f9hx'],
+      playlistLink: [''],
     });
 
     this.resultSearchForm = formBuilder.group({
