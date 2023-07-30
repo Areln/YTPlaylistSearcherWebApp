@@ -65,7 +65,7 @@ export class TestComponent {
 
     this.isLoading = true;
 
-    this.http.get<PlaylistDTO>(this.baseUrl + 'playlist/GetPlaylistFromYT?playlistID=' + playlistID).subscribe(result => {
+    this.http.get<PlaylistDTO>(this.baseUrl + 'playlist/GetPlaylistFromYT?playlistID=' + this.playlistID).subscribe(result => {
       this.playlist = result;
       this.videosToDisplay = this.playlist.videos;
       this.isLoading = false;
