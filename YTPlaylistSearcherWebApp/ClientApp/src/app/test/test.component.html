@@ -1,1 +1,83 @@
-<p>test works!</p>
+<div *ngIf="playlist == undefined && isLoading == true">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+
+<div *ngIf="errorMessage != undefined && errorMessage != null" style="color:red;">{{errorMessage}}</div>
+
+<!-- Playlist Input Bar -->
+<form [formGroup]="loadPlaylistForm" (ngSubmit)="PlaylistSubmit()">
+  <div>
+    <mat-form-field class="long-input">
+      <mat-label>Playlist</mat-label>
+      <input formControlName="playlistLink" matInput placeholder="Link or ID">
+    </mat-form-field>
+
+    <button mat-raised-button type="submit" color="primary">Submit</button>
+  </div>
+</form>
+
+<!-- Search Bar -->
+<form *ngIf="playlist != undefined" [formGroup]="resultSearchForm" (ngSubmit)="ResultsSearch()">
+  <div>
+    <mat-form-field class="long-input">
+      <mat-label>Search</mat-label>
+      <input formControlName="searchInput" matInput placeholder="Video Title or Channel Name">
+    </mat-form-field>
+
+    <button mat-raised-button type="submit" color="primary" style="margin-right: 1%;">Submit</button>
+
+    <button mat-raised-button type="button" color="primary" style="margin-right: 1%;" (click)="ClearSearchString()">Clear</button>
+
+    <div *ngIf="videosToDisplay != undefined">
+      Results: {{videosToDisplay.length}}
+    </div>
+  </div>
+</form>
+
+<!-- List of video results-->
+<div *ngIf="playlist != undefined" class="video-results">
+  <div *ngFor="let video of videosToDisplay; index as i" class="listitemvideo" [class.mat-elevation-z8]="true">
+    <a class="video-link" style=" color: white; text-decoration: none;" href="https://youtu.be/{{video.videoID}}&list=PLNL_Z6NDFLJZafBMO4kA9PbNBq0t-f9hx" target="_blank">
+      <table>
+        <tr>
+          <td>
+            <img class="thumbnail" src="{{video.thumbnail}}" />
+          </td>
+          <td>
+            <div style="margin:10px;">
+              <div>{{i+1}}:</div>
+              <div>Title:</div>
+              <div style="margin-left:15px;">{{video.title}}</div>
+              <div>Uploader:</div>
+              <div style="margin-left:15px;">{{video.channelTitle}}</div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </a>
+  </div>
+</div>
+
+<!-- TEMP DEBUG -->
+<div *ngIf="videosToDisplay == undefined" class="video-results">
+  <div class="listitemvideo" [class.mat-elevation-z8]="true">
+    <a class="video-link" style=" color: white; text-decoration: none;" href="" target="_blank">
+      <table>
+        <tr>
+          <td>
+            <img class="thumbnail" src="https://img.youtube.com/vi/JzLV2pOJbss/0.jpg" />
+          </td>
+          <td>
+            <div style="margin:10px;">
+              <div>Title:</div>
+              <div style="margin-left:15px;">Guy Squeexes his shit LIVE on Twitch</div>
+              <div>Uploader:</div>
+              <div style="margin-left:15px;">Squeeny Baby</div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </a>
+  </div>
+</div>
+

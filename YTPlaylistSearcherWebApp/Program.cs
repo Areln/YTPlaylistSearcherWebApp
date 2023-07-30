@@ -1,8 +1,15 @@
+using YTPlaylistSearcherWebApp.Repositories;
+using YTPlaylistSearcherWebApp.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+//builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient();
+builder.Services.AddTransient<IPlaylistService, PlaylistService>();
+builder.Services.AddTransient<IPlaylistRepository, PlaylistRepository>();
 
 var app = builder.Build();
 
@@ -17,10 +24,15 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapGet("/debug/routes", (IEnumerable<EndpointDataSource> endpointSources) =>
+        string.Join("\n", endpointSources.SelectMany(source => source.Endpoints)));
+}
 
 app.MapFallbackToFile("index.html"); ;
 
