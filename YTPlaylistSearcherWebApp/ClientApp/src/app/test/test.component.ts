@@ -54,7 +54,11 @@ export class TestComponent {
     }
     else if (rawUrl.includes('https://m.youtube.com/playlist?list=')) {
       playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
-    } else {
+    } 
+    else if (rawUrl.includes('playlist?list=')) {
+      playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
+    }
+    else {
       playlistID = this.loadPlaylistForm.controls.playlistLink.value;
     }
 
