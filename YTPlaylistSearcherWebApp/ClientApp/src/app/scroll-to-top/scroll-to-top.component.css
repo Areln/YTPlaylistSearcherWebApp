@@ -1,0 +1,7 @@
+.scroll-to-top {
+  position: fixed;
+  float: right;
+  right: 14px;
+  bottom: 14px;
+  z-index: 100;
+}
