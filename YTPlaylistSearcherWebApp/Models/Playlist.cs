@@ -17,6 +17,7 @@ namespace YTPlaylistSearcherWebApp.Models
         public string? PlaylistTitle { get; set; }
         public string? Thumbnail { get; set; }
         public string? ChannelTitle { get; set; }
+        public DateTime UpdatedDate { get; set; }
 
         public virtual ICollection<Video> Videos { get; set; }
     }

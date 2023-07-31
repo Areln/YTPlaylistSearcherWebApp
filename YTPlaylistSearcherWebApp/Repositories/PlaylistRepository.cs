@@ -23,6 +23,14 @@ namespace YTPlaylistSearcherWebApp.Repositories
             _httpClientFactory = httpClientFactory;
         }
 
+        async Task<string> MakeGetRequest(string url)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        }
+
         public async Task<YTPlaylist> GetPlaylistFromYT(string playlistID)
         {
             var client = _httpClientFactory.CreateClient();
@@ -70,23 +78,33 @@ namespace YTPlaylistSearcherWebApp.Repositories
 
         public async Task AddPlaylist(YTPSContext context, Playlist newPlaylist)
         {
+            newPlaylist.UpdatedDate = DateTime.UtcNow;
             await context.Playlists.AddAsync(newPlaylist);
         }
 
-        async Task<string> MakeGetRequest(string url)
+        public async Task UpdatePlaylist(YTPSContext context, Playlist dbPlaylist)
         {
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            dbPlaylist.UpdatedDate = DateTime.UtcNow;
+            context.Playlists.Update(dbPlaylist);
+        }
+        public async Task DeleteVideos(YTPSContext context, Video video)
+        {
+            context.Videos.Remove(video);
+        }
+        public async Task DeleteVideos(YTPSContext context, IEnumerable<Video> video)
+        {
+            context.Videos.RemoveRange(video);
         }
     }
 
     public interface IPlaylistRepository
     {
+        Task DeleteVideos(YTPSContext context, Video video);
+        Task DeleteVideos(YTPSContext context, IEnumerable<Video> video);
         Task<YTGetPlaylistDetailsResponse> GetPlaylistDetailsFromYT(string playlistID);
         Task AddPlaylist(YTPSContext context, Playlist newPlaylist);
         Task<Playlist> GetPlaylist(YTPSContext context, string playlistID);
         Task<YTPlaylist> GetPlaylistFromYT(string playlistID);
+        Task UpdatePlaylist(YTPSContext context, Playlist dbPlaylist);
     }
 }

@@ -2,6 +2,7 @@
 export interface PlaylistDTO {
   playlistID: string;
   playlistTitle: string;
+  channelOwner: string;
   videos: VideoDTO[];
 }
 

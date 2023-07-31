@@ -44,6 +44,10 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
                 .HasMaxLength(200)
                 .HasColumnName("thumbnail");
 
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("updatedDate");
+
             OnConfigurePartial(entity);
         }
 

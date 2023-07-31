@@ -12,7 +12,9 @@
       <input formControlName="playlistLink" matInput placeholder="Link or ID">
     </mat-form-field>
 
-    <button mat-raised-button type="submit" color="primary">Submit</button>
+    <button mat-raised-button style="margin-right: 1%;" type="submit" color="primary">Submit</button>
+
+    <button *ngIf="playlist != undefined" mat-raised-button type="button" color="primary" (click)="RefreshPlaylist()">Refresh</button>
   </div>
 </form>
 
@@ -27,6 +29,14 @@
     <button mat-raised-button type="submit" color="primary" style="margin-right: 1%;">Submit</button>
 
     <button mat-raised-button type="button" color="primary" style="margin-right: 1%;" (click)="ClearSearchString()">Clear</button>
+
+    <div>
+      {{playlist.playlistTitle}}
+    </div>
+
+    <div>
+      {{playlist.channelOwner}}
+    </div>
 
     <div *ngIf="videosToDisplay != undefined">
       Results: {{videosToDisplay.length}}

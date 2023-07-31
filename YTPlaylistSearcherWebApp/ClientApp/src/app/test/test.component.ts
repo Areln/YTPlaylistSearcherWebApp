@@ -49,14 +49,7 @@ export class TestComponent {
 
     var rawUrl = this.getPlaylistLinkInput();
 
-
-    if (rawUrl.includes('https://www.youtube.com/playlist?list=')) {
-      this.playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
-    }
-    else if (rawUrl.includes('https://m.youtube.com/playlist?list=')) {
-      this.playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
-    }
-    else if (rawUrl.includes('playlist?list=')) {
+    if (rawUrl.includes('playlist?list=')) {
       this.playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
     }
     else {
@@ -98,5 +91,21 @@ export class TestComponent {
   public ClearSearchString() {
     this.resultSearchForm.controls.searchInput.patchValue('');
     this.ResultsSearch();
+  }
+
+  public RefreshPlaylist() {
+
+    this.http.get<PlaylistDTO>(this.baseUrl + 'playlist/RefreshPlaylist?playlistID=' + this.playlistID).subscribe(result => {
+      this.playlist = result;
+      this.videosToDisplay = this.playlist.videos;
+      this.isLoading = false;
+      this.errorMessage = null;
+    },
+      error => {
+        console.error(error);
+        this.errorMessage = 'Error!';
+        this.isLoading = false;
+      });
+
   }
 }
