@@ -32,7 +32,7 @@ namespace YTPlaylistSearcherWebApp.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, "GetPlaylistFromYT");
-                throw;
+                return BadRequest(e.Message + " " + e.InnerException);
             }
         }
 
@@ -47,7 +47,7 @@ namespace YTPlaylistSearcherWebApp.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, "GetPlaylist");
-                throw;
+                return BadRequest(e.Message + " " + e.InnerException);
             }
         }
 
@@ -62,7 +62,7 @@ namespace YTPlaylistSearcherWebApp.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, "GetPlaylist");
-                throw;
+                return BadRequest(e.Message + " " + e.InnerException);
             }
         }
     }
