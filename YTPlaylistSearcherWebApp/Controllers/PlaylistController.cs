@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc;
+using YTPlaylistSearcherWebApp.Data;
 using YTPlaylistSearcherWebApp.Services;
 
 namespace YTPlaylistSearcherWebApp.Controllers
@@ -10,12 +11,14 @@ namespace YTPlaylistSearcherWebApp.Controllers
     public class PlaylistController : ControllerBase
     {
         private readonly ILogger<PlaylistController> _logger;
+        private readonly YTPSContext _context;
         private readonly IPlaylistService _playlistService;
 
-        public PlaylistController(ILogger<PlaylistController> logger, IPlaylistService playlistService)
+        public PlaylistController(ILogger<PlaylistController> logger, YTPSContext context, IPlaylistService playlistService)
         {
             _logger = logger;
             _playlistService = playlistService;
+            _context = context;
         }
 
         [HttpGet("GetPlaylistFromYT")]
@@ -25,6 +28,26 @@ namespace YTPlaylistSearcherWebApp.Controllers
             {
                 var playlist = await _playlistService.GetPlaylistFromYT(playlistID);
                 return Ok(playlist);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "GetPlaylistFromYT");
+                throw;
+            }
+        }
+
+        [HttpGet("Test")]
+        public async Task<IActionResult> Test()
+        {
+            try
+            {
+                await _context.Playlists.AddAsync(new Models.Playlist
+                {
+                    PlaylistId = "test"
+                });
+                await _context.SaveChangesAsync();
+
+                return Ok();
             }
             catch (Exception e)
             {

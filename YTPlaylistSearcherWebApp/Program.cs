@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using YTPlaylistSearcherWebApp.Data;
 using YTPlaylistSearcherWebApp.Repositories;
 using YTPlaylistSearcherWebApp.Services;
 
@@ -10,6 +12,8 @@ builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 builder.Services.AddTransient<IPlaylistService, PlaylistService>();
 builder.Services.AddTransient<IPlaylistRepository, PlaylistRepository>();
+
+builder.Services.AddDbContext<YTPSContext>(options => options.UseMySql(builder.Configuration.GetValue<string>("ConnectionString"), ServerVersion.Create(1, 0, 0, Pomelo.EntityFrameworkCore.MySql.Infrastructure.ServerType.MySql)));
 
 var app = builder.Build();
 
