@@ -5,9 +5,11 @@
   margin: 10px;
   /*  background-color: #272727;*/
   background-color: #673ab7;
-  font-size: large;
-  border-radius: 5px;
+  /*  font-size: large;*/
+  border-radius: 25px;
   font-family: Roboto, sans-serif;
+  max-width: none;
+  color: white;
 }
 
 .listitemvideo:hover {

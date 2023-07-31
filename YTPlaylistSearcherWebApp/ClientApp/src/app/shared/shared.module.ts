@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { FlexLayoutModule } from '@angular/flex-layout';
+
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,7 +17,8 @@ import { MatCardModule } from '@angular/material/card';
 @NgModule({
   imports: [
     CommonModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    FlexLayoutModule
   ],
   declarations: [
 
@@ -31,7 +34,8 @@ import { MatCardModule } from '@angular/material/card';
     MatDividerModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatCardModule
+    MatCardModule,
+    FlexLayoutModule
   ]
 })
 export class SharedModule { }

@@ -94,6 +94,7 @@ export class TestComponent {
   }
 
   public RefreshPlaylist() {
+    this.isLoading = true;
 
     this.http.get<PlaylistDTO>(this.baseUrl + 'playlist/RefreshPlaylist?playlistID=' + this.playlistID).subscribe(result => {
       this.playlist = result;
