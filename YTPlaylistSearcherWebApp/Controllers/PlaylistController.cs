@@ -36,22 +36,17 @@ namespace YTPlaylistSearcherWebApp.Controllers
             }
         }
 
-        [HttpGet("Test")]
-        public async Task<IActionResult> Test()
+        [HttpGet("GetPlaylist")]
+        public async Task<IActionResult> GetPlaylist([FromQuery] string playlistID)
         {
             try
             {
-                await _context.Playlists.AddAsync(new Models.Playlist
-                {
-                    PlaylistId = "test"
-                });
-                await _context.SaveChangesAsync();
-
-                return Ok();
+                var playlistDto = await _playlistService.GetPlaylist(_context, playlistID);
+                return Ok(playlistDto);
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "GetPlaylistFromYT");
+                _logger.LogError(e, "GetPlaylist");
                 throw;
             }
         }

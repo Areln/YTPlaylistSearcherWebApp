@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Runtime.Versioning;
+using YTPlaylistSearcherWebApp.Data;
+using YTPlaylistSearcherWebApp.DTOs;
 using YTPlaylistSearcherWebApp.Models;
 
 namespace YTPlaylistSearcherWebApp.Repositories
@@ -43,15 +46,47 @@ namespace YTPlaylistSearcherWebApp.Repositories
                     playlist.nextPageToken = tempList.nextPageToken;
                     requestCount++;
                 }
-                
+
             }
 
             return playlist;
+        }
+
+        public async Task<YTGetPlaylistDetailsResponse> GetPlaylistDetailsFromYT(string playlistID)
+        {
+            var ytKey = _configuration.GetValue(typeof(string), "YTKey");
+
+            var jsonContent = await MakeGetRequest($"{YOUTUBE_HOST}/playlists?part=snippet&id={playlistID}&key={ytKey}");
+            
+            return JsonConvert.DeserializeObject<YTGetPlaylistDetailsResponse>(jsonContent);
+        }
+
+        public async Task<Playlist> GetPlaylist(YTPSContext context, string playlistID)
+        {
+            return await context.Playlists.Where(x => x.PlaylistId == playlistID)
+                .Include(x => x.Videos)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task AddPlaylist(YTPSContext context, Playlist newPlaylist)
+        {
+            await context.Playlists.AddAsync(newPlaylist);
+        }
+
+        async Task<string> MakeGetRequest(string url)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
     }
 
     public interface IPlaylistRepository
     {
+        Task<YTGetPlaylistDetailsResponse> GetPlaylistDetailsFromYT(string playlistID);
+        Task AddPlaylist(YTPSContext context, Playlist newPlaylist);
+        Task<Playlist> GetPlaylist(YTPSContext context, string playlistID);
         Task<YTPlaylist> GetPlaylistFromYT(string playlistID);
     }
 }

@@ -29,7 +29,7 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
                 .HasColumnName("channelTitle");
 
             entity.Property(e => e.Description)
-                .HasMaxLength(200)
+                .HasMaxLength(400)
                 .HasColumnName("description");
 
             entity.Property(e => e.PlaylistId).HasColumnName("playlistID");

@@ -96,5 +96,19 @@
         public Maxres maxres { get; set; }
     }
 
+    public class YTGetPlaylistDetailsResponse
+    {
+        public string kind { get; set; }
+        public string etag { get; set; }
+        public PageInfo pageInfo { get; set; }
+        public List<PlaylistDetails> items { get; set; }
+    }
 
+    public class PlaylistDetails 
+    {
+        public string kind { get; set; }
+        public string etag { get; set; }
+        public string id { get; set; }
+        public Snippet snippet { get; set; }
+    }
 }
