@@ -52,8 +52,8 @@ namespace YTPlaylistSearcherWebApp.Services
             }
             else
             {
-                // will refresh playlists once a day
-                if (dbPlaylist.UpdatedDate.AddDays(1) < DateTime.UtcNow)
+                // TODO: Make Playlist Refresh Rate a setting we get from the DB
+                if (dbPlaylist.UpdatedDate.AddMinutes(15) < DateTime.UtcNow)
                 {
                     returnPlaylist = await RefreshPlaylist(context, playlistID);
                 }
