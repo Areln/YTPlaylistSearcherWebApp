@@ -76,11 +76,6 @@ namespace YTPlaylistSearcherWebApp.Services
             return dbPlaylist;
         }
 
-        async Task<IOrderedEnumerable<VideoDTO>> GetVideosSorted(IEnumerable<VideoDTO> videos, SearchChipBagDTO bag)
-        {
-            return videos.OrderByDescending(x => x.PublishedDate);
-        }
-
         public async Task<PlaylistDetailsDTO> GetPlaylistDetails(string playlistID)
         {
             var details = await _playlistRepository.GetPlaylistDetailsFromYT(playlistID);
