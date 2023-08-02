@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc;
 using YTPlaylistSearcherWebApp.Data;
+using YTPlaylistSearcherWebApp.DTOs;
 using YTPlaylistSearcherWebApp.Services;
 
 namespace YTPlaylistSearcherWebApp.Controllers
@@ -41,7 +42,16 @@ namespace YTPlaylistSearcherWebApp.Controllers
         {
             try
             {
-                var playlistDto = await _playlistService.GetPlaylist(_context, playlistID);
+                var searchBag = new SearchChipBagDTO();
+                searchBag.Chips = new List<SearchChipDTO>();
+                searchBag.Chips.Add(new SearchChipDTO
+                {
+                    ChipType = "OrderVideoBy",
+                    Value = "PublishedDate",
+                    Modifier = "false"
+                });
+
+                var playlistDto = await _playlistService.GetPlaylistSorted(_context, playlistID, searchBag);
                 return Ok(playlistDto);
             }
             catch (Exception e)

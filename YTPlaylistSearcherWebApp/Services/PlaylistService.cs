@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Linq;
 using YTPlaylistSearcherWebApp.Data;
 using YTPlaylistSearcherWebApp.DTOs;
 using YTPlaylistSearcherWebApp.Mappers;
@@ -66,6 +68,19 @@ namespace YTPlaylistSearcherWebApp.Services
             return returnPlaylist;
         }
 
+        public async Task<PlaylistDTO> GetPlaylistSorted(YTPSContext context, string playlistID, SearchChipBagDTO bag)
+        {
+            var dbPlaylist = await GetPlaylist(context, playlistID);
+            var sorted = dbPlaylist.Videos;
+            dbPlaylist.Videos = sorted.OrderByDescending(x => x.PublishedDate);
+            return dbPlaylist;
+        }
+
+        async Task<IOrderedEnumerable<VideoDTO>> GetVideosSorted(IEnumerable<VideoDTO> videos, SearchChipBagDTO bag)
+        {
+            return videos.OrderByDescending(x => x.PublishedDate);
+        }
+
         public async Task<PlaylistDetailsDTO> GetPlaylistDetails(string playlistID)
         {
             var details = await _playlistRepository.GetPlaylistDetailsFromYT(playlistID);
@@ -84,32 +99,31 @@ namespace YTPlaylistSearcherWebApp.Services
 
             // get YTPlaylist
             var ytPlaylist = await GetPlaylistFromYT(playlistID);
-            var dtoPlaylist = PlaylistMapper.MapToModel(ytPlaylist);
+            var ytModelPlaylist = PlaylistMapper.MapToModel(ytPlaylist);
 
             var vidsToRemove = dbPlaylist.Videos
-                .Where(x => dtoPlaylist.Videos
+                .Where(x => ytModelPlaylist.Videos
                     .Where(z => z.VideoId == x.VideoId)
                     .Any() == false)
                 .ToList();
 
-            var newVids = dtoPlaylist.Videos
+            var newVids = ytModelPlaylist.Videos
                 .Where(x => dbPlaylist.Videos
                     .Where(z => z.VideoId == x.VideoId)
                     .Any() == false)
                 .ToList();
 
-            //vidsToRemove.ForEach(x =>
-            //{
-            //    dbPlaylist.Videos.Remove(dbPlaylist.Videos.Where(a => a.VideoId == x.VideoId).First());
-            //});
+            // Update DB
             await _playlistRepository.DeleteVideos(context, vidsToRemove);
-            
             dbPlaylist.Videos = dbPlaylist.Videos.Concat(newVids).ToList();
 
             await _playlistRepository.UpdatePlaylist(context, dbPlaylist);
             await context.SaveChangesAsync();
 
-            return ytPlaylist;
+            // return fresh copy of db
+            var freshDto = await GetPlaylistSorted(context, playlistID, new SearchChipBagDTO());
+
+            return freshDto;
         }
     }
 
@@ -118,6 +132,7 @@ namespace YTPlaylistSearcherWebApp.Services
         Task<PlaylistDetailsDTO> GetPlaylistDetails(string playlistID);
         Task<PlaylistDTO> GetPlaylistFromYT(string playlistID);
         Task<PlaylistDTO> GetPlaylist(YTPSContext context, string playlistID);
+        Task<PlaylistDTO> GetPlaylistSorted(YTPSContext context, string playlistID, SearchChipBagDTO bag);
         Task<PlaylistDTO> RefreshPlaylist(YTPSContext context, string playlistID);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Runtime.Versioning;
@@ -65,15 +66,41 @@ namespace YTPlaylistSearcherWebApp.Repositories
             var ytKey = _configuration.GetValue(typeof(string), "YTKey");
 
             var jsonContent = await MakeGetRequest($"{YOUTUBE_HOST}/playlists?part=snippet&id={playlistID}&key={ytKey}");
-            
+
             return JsonConvert.DeserializeObject<YTGetPlaylistDetailsResponse>(jsonContent);
         }
 
-        public async Task<Playlist> GetPlaylist(YTPSContext context, string playlistID)
+        public async Task<Playlist> GetPlaylist(YTPSContext context, string playlistID, IQueryable<Playlist>? playlistQuery = null, IQueryable<Video>? videoQuery = null)
         {
-            return await context.Playlists.Where(x => x.PlaylistId == playlistID)
-                .Include(x => x.Videos)
-                .FirstOrDefaultAsync();
+            try
+            {
+                var baseQ = context.Playlists
+                    .Where(x => x.PlaylistId == playlistID);
+
+                baseQ = baseQ.Include(x => x.Videos);
+
+                if (playlistQuery != null)
+                {
+                    baseQ = baseQ.Concat(playlistQuery);
+                }
+
+                //var videoBaseQuery = context.Videos.AsQueryable();
+                //if (videoQuery != null)
+                //{
+                //    videoBaseQuery = videoQuery;
+                //}
+
+                //baseQ = baseQ.Include(x => x.Videos.Concat(videoBaseQuery));
+
+                var rr = await baseQ.FirstOrDefaultAsync();
+
+                return rr;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+            
         }
 
         public async Task AddPlaylist(YTPSContext context, Playlist newPlaylist)
@@ -103,7 +130,7 @@ namespace YTPlaylistSearcherWebApp.Repositories
         Task DeleteVideos(YTPSContext context, IEnumerable<Video> video);
         Task<YTGetPlaylistDetailsResponse> GetPlaylistDetailsFromYT(string playlistID);
         Task AddPlaylist(YTPSContext context, Playlist newPlaylist);
-        Task<Playlist> GetPlaylist(YTPSContext context, string playlistID);
+        Task<Playlist> GetPlaylist(YTPSContext context, string playlistID, IQueryable<Playlist>? playlistQuery = null, IQueryable<Video>? videoQuery = null);
         Task<YTPlaylist> GetPlaylistFromYT(string playlistID);
         Task UpdatePlaylist(YTPSContext context, Playlist dbPlaylist);
     }
