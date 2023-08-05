@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Inject } from '@angular/core';
+import { Component, Directive, ElementRef, Inject, Input, Renderer2, SecurityContext } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PlaylistDTO, VideoDTO } from '../DTOs/PlaylistDTO';
 
 @Component({
@@ -13,7 +14,7 @@ export class TestComponent {
   http!: HttpClient;
   baseUrl!: string;
   formBuilder!: FormBuilder;
-
+  sanitizer!: DomSanitizer;
   isLoading: boolean = false;
   errorMessage: string | null | undefined;
   loadPlaylistForm!: FormGroup;
@@ -21,12 +22,13 @@ export class TestComponent {
   playlist!: PlaylistDTO;
   playlistID!: string;
   videosToDisplay!: VideoDTO[];
+  ytEmbedSource: string = 'https://www.youtube.com/embed/';
 
-  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string, formBuilder: FormBuilder) {
+  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string, formBuilder: FormBuilder, sanitizer: DomSanitizer) {
     this.http = http;
     this.baseUrl = baseUrl;
     this.formBuilder = formBuilder;
-
+    this.sanitizer = sanitizer;
     this.loadPlaylistForm = formBuilder.group({
       //playlistLink: ['https://www.youtube.com/playlist?list=PLNL_Z6NDFLJZafBMO4kA9PbNBq0t-f9hx'],
       playlistLink: [''],
@@ -38,7 +40,15 @@ export class TestComponent {
   }
 
   public getPlaylistLinkInput(): string {
-    return this.loadPlaylistForm.controls.playlistLink.value as string;
+    var url = this.loadPlaylistForm.controls.playlistLink.value as string;
+    if (url.includes('playlist?list=')) {
+      this.playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
+    }
+    else {
+      this.playlistID = this.loadPlaylistForm.controls.playlistLink.value;
+    }
+
+    return this.playlistID;
   }
 
   public getSearchInput(): string {
@@ -47,14 +57,7 @@ export class TestComponent {
 
   public PlaylistSubmit() {
 
-    var rawUrl = this.getPlaylistLinkInput();
-
-    if (rawUrl.includes('playlist?list=')) {
-      this.playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
-    }
-    else {
-      this.playlistID = this.loadPlaylistForm.controls.playlistLink.value;
-    }
+    this.getPlaylistLinkInput();
 
     this.isLoading = true;
 
@@ -109,4 +112,30 @@ export class TestComponent {
       });
 
   }
+
+  public selectVideo(id: string) {
+    this.ytEmbed = this.sanitizer.bypassSecurityTrustResourceUrl((this.ytEmbedSource + id + '?list=' + this.playlistID));
+  }
+
+}
+
+@Directive({
+  selector: 'iframe'
+})
+export class CachedSrcDirective {
+
+  @Input()
+  public get cachedSrc(): string {
+    return this.elRef.nativeElement.src;
+  }
+  public set cachedSrc(src: string) {
+    if (this.elRef.nativeElement.src !== src) {
+      this.renderer.setAttribute(this.elRef.nativeElement, 'src', src);
+    }
+  }
+
+  constructor(
+    private elRef: ElementRef,
+    private renderer: Renderer2
+  ) { }
 }
