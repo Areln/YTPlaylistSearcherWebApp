@@ -3,40 +3,48 @@ import { Component, Directive, ElementRef, Inject, Input, Renderer2, SecurityCon
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PlaylistDTO, VideoDTO } from '../DTOs/PlaylistDTO';
+import { ActivatedRoute } from '@angular/router'
+import { PlaylistService } from '../services/PlaylistService';
 
 @Component({
-  selector: 'app-test',
-  templateUrl: './test.component.html',
-  styleUrls: ['./test.component.scss']
+  selector: 'app-playlist-search',
+  templateUrl: './playlist-search.component.html',
+  styleUrls: ['./playlist-search.component.scss']
 })
-export class TestComponent {
+export class PlaylistSearchComponent {
 
-  http!: HttpClient;
-  baseUrl!: string;
-  formBuilder!: FormBuilder;
-  sanitizer!: DomSanitizer;
   isLoading: boolean = false;
   errorMessage: string | null | undefined;
   loadPlaylistForm!: FormGroup;
   resultSearchForm!: FormGroup;
   playlist!: PlaylistDTO;
   playlistID!: string;
+  defaultSearch: string | null;
   videosToDisplay!: VideoDTO[];
   ytEmbedSource: string = 'https://www.youtube.com/embed/';
+  ytEmbed!: SafeResourceUrl;
 
-  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string, formBuilder: FormBuilder, sanitizer: DomSanitizer) {
-    this.http = http;
-    this.baseUrl = baseUrl;
-    this.formBuilder = formBuilder;
-    this.sanitizer = sanitizer;
+  constructor(
+    private formBuilder: FormBuilder,
+    private sanitizer: DomSanitizer,
+    private route: ActivatedRoute,
+    private _playlistService: PlaylistService) {
+
+    this.defaultSearch = this.route.snapshot.paramMap.get('id');
+
     this.loadPlaylistForm = formBuilder.group({
       //playlistLink: ['https://www.youtube.com/playlist?list=PLNL_Z6NDFLJZafBMO4kA9PbNBq0t-f9hx'],
-      playlistLink: [''],
+      playlistLink: [this.defaultSearch],
     });
 
     this.resultSearchForm = formBuilder.group({
       searchInput: [''],
     });
+
+    if (this.defaultSearch != null && this.defaultSearch != '') {
+      this.defaultSearch = sanitizer.sanitize(SecurityContext.URL, this.defaultSearch);
+      this.PlaylistSubmit();
+    }
   }
 
   public getPlaylistLinkInput(): string {
@@ -61,7 +69,7 @@ export class TestComponent {
 
     this.isLoading = true;
 
-    this.http.get<PlaylistDTO>(this.baseUrl + 'playlist/GetPlaylist?playlistID=' + this.playlistID).subscribe(result => {
+    this._playlistService.GetPlaylist(this.playlistID).subscribe(result => {
       this.playlist = result;
       this.videosToDisplay = this.playlist.videos;
       this.isLoading = false;
@@ -72,6 +80,8 @@ export class TestComponent {
         this.errorMessage = 'Error!';
         this.isLoading = false;
       });
+
+
   }
 
   public ResultsSearch() {
@@ -99,7 +109,7 @@ export class TestComponent {
   public RefreshPlaylist() {
     this.isLoading = true;
 
-    this.http.get<PlaylistDTO>(this.baseUrl + 'playlist/RefreshPlaylist?playlistID=' + this.playlistID).subscribe(result => {
+    this._playlistService.RefreshPlaylist(this.playlistID).subscribe(result => {
       this.playlist = result;
       this.videosToDisplay = this.playlist.videos;
       this.isLoading = false;
@@ -117,25 +127,4 @@ export class TestComponent {
     this.ytEmbed = this.sanitizer.bypassSecurityTrustResourceUrl((this.ytEmbedSource + id + '?list=' + this.playlistID));
   }
 
-}
-
-@Directive({
-  selector: 'iframe'
-})
-export class CachedSrcDirective {
-
-  @Input()
-  public get cachedSrc(): string {
-    return this.elRef.nativeElement.src;
-  }
-  public set cachedSrc(src: string) {
-    if (this.elRef.nativeElement.src !== src) {
-      this.renderer.setAttribute(this.elRef.nativeElement, 'src', src);
-    }
-  }
-
-  constructor(
-    private elRef: ElementRef,
-    private renderer: Renderer2
-  ) { }
 }

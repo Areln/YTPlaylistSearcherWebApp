@@ -9,10 +9,11 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
-import { TestComponent } from './test/test.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedModule } from './shared/shared.module';
 import { ScrollToTopComponent } from './scroll-to-top/scroll-to-top.component';
+import { PlaylistSearchComponent } from './playlist-search/playlist-search.component';
+import { PlaylistsViewComponent } from './playlists-view/playlists-view.component';
 
 @NgModule({
   declarations: [
@@ -21,16 +22,21 @@ import { ScrollToTopComponent } from './scroll-to-top/scroll-to-top.component';
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
-    TestComponent,
-    ScrollToTopComponent
+    PlaylistSearchComponent,
+    ScrollToTopComponent,
+    PlaylistsViewComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
+      { path: 'search/:id', component: HomeComponent, pathMatch: 'full' },
+      { path: 'playlists', component: PlaylistsViewComponent },
+      { path: 'videos', component: PlaylistsViewComponent },
+      //{ path: 'counter', component: CounterComponent },
+      //{ path: 'fetch-data', component: FetchDataComponent },
+
     ]),
     BrowserAnimationsModule,
     SharedModule,

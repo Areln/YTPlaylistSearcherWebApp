@@ -120,6 +120,12 @@ namespace YTPlaylistSearcherWebApp.Services
 
             return freshDto;
         }
+
+        public async Task<IEnumerable<PlaylistDTO>> GetPlaylists(YTPSContext _context)
+        {
+            var result = await _playlistRepository.GetPlaylists(_context);
+            return PlaylistMapper.MapToDTO(result);
+        }
     }
 
     public interface IPlaylistService
@@ -129,5 +135,6 @@ namespace YTPlaylistSearcherWebApp.Services
         Task<PlaylistDTO> GetPlaylist(YTPSContext context, string playlistID);
         Task<PlaylistDTO> GetPlaylistSorted(YTPSContext context, string playlistID, SearchChipBagDTO bag);
         Task<PlaylistDTO> RefreshPlaylist(YTPSContext context, string playlistID);
+        Task<IEnumerable<PlaylistDTO>> GetPlaylists(YTPSContext _context);
     }
 }

@@ -51,7 +51,16 @@ namespace YTPlaylistSearcherWebApp.Repositories
                 {
                     response = await client.GetAsync($"{YOUTUBE_HOST}/playlistItems?part=snippet%2CcontentDetails&maxResults={MAX_RESULTS}&pageToken={playlist.nextPageToken}&playlistId={playlistID}&key={ytKey}");
                     var tempList = JsonConvert.DeserializeObject<YTPlaylist>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
-                    playlist.items = playlist.items.Concat(tempList.items);
+                    
+                    if (tempList?.items != null)
+                    {
+                        playlist.items = playlist.items.Concat(tempList.items);
+                    }
+                    else
+                    {
+                        break;
+                    }
+
                     playlist.nextPageToken = tempList.nextPageToken;
                     requestCount++;
                 }
@@ -114,13 +123,20 @@ namespace YTPlaylistSearcherWebApp.Repositories
             dbPlaylist.UpdatedDate = DateTime.UtcNow;
             context.Playlists.Update(dbPlaylist);
         }
+
         public async Task DeleteVideos(YTPSContext context, Video video)
         {
             context.Videos.Remove(video);
         }
+
         public async Task DeleteVideos(YTPSContext context, IEnumerable<Video> video)
         {
             context.Videos.RemoveRange(video);
+        }
+
+        public async Task<IEnumerable<Playlist>> GetPlaylists(YTPSContext context)
+        {
+            return context.Playlists.AsEnumerable();
         }
     }
 
@@ -133,5 +149,6 @@ namespace YTPlaylistSearcherWebApp.Repositories
         Task<Playlist> GetPlaylist(YTPSContext context, string playlistID, IQueryable<Playlist>? playlistQuery = null, IQueryable<Video>? videoQuery = null);
         Task<YTPlaylist> GetPlaylistFromYT(string playlistID);
         Task UpdatePlaylist(YTPSContext context, Playlist dbPlaylist);
+        Task<IEnumerable<Playlist>> GetPlaylists(YTPSContext _context);
     }
 }

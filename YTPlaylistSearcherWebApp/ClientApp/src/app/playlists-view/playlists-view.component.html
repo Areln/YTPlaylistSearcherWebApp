@@ -1,0 +1,24 @@
+<div>
+
+  <div>
+    <p>
+      Below is a collection of playlists that have been searched using this tool. Click one to view it.
+    </p>
+  </div>
+
+  <!--foreach playlist in list-->
+  <div>
+    <div *ngIf="isLoading == true">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+
+    <div *ngIf="playlists">
+      <div *ngFor="let playlist of playlists; index as i">
+        <a class="nav-link text-dark" [routerLink]="['/search', playlist.playlistID]">
+          {{i+1}}: {{playlist.playlistTitle}}
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>

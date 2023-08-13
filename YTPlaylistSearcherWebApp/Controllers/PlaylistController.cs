@@ -75,5 +75,20 @@ namespace YTPlaylistSearcherWebApp.Controllers
                 return BadRequest(e.Message + " " + e.InnerException);
             }
         }
+
+        [HttpGet("GetPlaylists")]
+        public async Task<IActionResult> GetPlaylists()
+        {
+            try
+            {
+                var playlistDto = await _playlistService.GetPlaylists(_context);
+                return Ok(playlistDto);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "GetPlaylists");
+                return BadRequest(e.Message + " " + e.InnerException);
+            }
+        }
     }
 }

@@ -10,25 +10,6 @@ namespace YTPlaylistSearcherWebApp.Mappers
         // YT MODELS TO DB MODELS
 
         // DB MODELS TO DTO
-        public static Playlist MapToModel(PlaylistDTO playlistDTO)
-        {
-            return new Playlist
-            {
-                PlaylistId = playlistDTO.PlaylistID,
-                PlaylistTitle = playlistDTO.PlaylistTitle,
-                ChannelTitle = playlistDTO.ChannelOwner,
-                Videos = playlistDTO.Videos.Select(x => new Video
-                {
-                    VideoId = x.VideoID,
-                    Title = x.Title,
-                    Description = x.Description,
-                    ChannelTitle = x.ChannelTitle,
-                    PublishedDate = x.PublishedDate,
-                    Thumbnail = x.Thumbnail
-                }).ToList(),
-            };
-        }
-        // DTO TO DB MODELS
         public static PlaylistDTO MapToDTO(Playlist playlistModel)
         {
             return new PlaylistDTO
@@ -48,6 +29,45 @@ namespace YTPlaylistSearcherWebApp.Mappers
             };
         }
 
+        public static IEnumerable<PlaylistDTO> MapToDTO(IEnumerable<Playlist> list)
+        {
+            return list.Select(x => new PlaylistDTO
+            {
+                PlaylistID = x.PlaylistId,
+                PlaylistTitle = x.PlaylistTitle,
+                ChannelOwner = x.ChannelTitle,
+                Videos = x.Videos.Select(x => new VideoDTO
+                {
+                    VideoID = x.VideoId,
+                    Title = x.Title,
+                    Description = x.Description,
+                    ChannelTitle = x.ChannelTitle,
+                    PublishedDate = x.PublishedDate,
+                    Thumbnail = x.Thumbnail
+                })
+            });
+        }
+
+        // DTO TO DB MODELS
+        public static Playlist MapToModel(PlaylistDTO playlistDTO)
+        {
+            return new Playlist
+            {
+                PlaylistId = playlistDTO.PlaylistID,
+                PlaylistTitle = playlistDTO.PlaylistTitle,
+                ChannelTitle = playlistDTO.ChannelOwner,
+                Videos = playlistDTO.Videos.Select(x => new Video
+                {
+                    VideoId = x.VideoID,
+                    Title = x.Title,
+                    Description = x.Description,
+                    ChannelTitle = x.ChannelTitle,
+                    PublishedDate = x.PublishedDate,
+                    Thumbnail = x.Thumbnail
+                }).ToList(),
+            };
+        }
+
         // TY TO DTO
         public static PlaylistDetailsDTO MapToDTO(YTGetPlaylistDetailsResponse response)
         {
@@ -59,5 +79,6 @@ namespace YTPlaylistSearcherWebApp.Mappers
                 PlaylistID = response.items.First().id
             };
         }
+
     }
 }
