@@ -45,15 +45,10 @@
   </div>
 </form>
 
-<!--<div *ngIf="ytEmbed">
-  <iframe width="560" height="315" style=" position: fixed; float: right; right: 100px; top: 100px; z-index: 100;" [src]="ytEmbed" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-</div>-->
-
 <div fxLayout="row">
   <!-- List of video results-->
   <div *ngIf="playlist != undefined" class="video-results">
     <div *ngFor="let video of videosToDisplay; index as i">
-      <!--<a class="video-link" style=" color: white; text-decoration: none;" href="https://youtu.be/{{video.videoID}}&list={{playlistID}}" target="_blank">-->
       <mat-card class="listitemvideo" fxLayout="row" (click)="selectVideo(video.videoID)">
         <img src="{{video.thumbnail}}" style="max-width:15%; margin-right:1%; border-radius:25px;" alt="thumbnail">
         <div fxLayout="column">
@@ -62,7 +57,6 @@
           <p>Date Added: {{video.publishedDate | date}}</p>
         </div>
       </mat-card>
-      <!--</a>-->
     </div>
   </div>
 
@@ -70,7 +64,5 @@
     <iframe width="560" height="315" style="position:fixed; " [src]="ytEmbed" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
   </div>
 </div>
-
-
 
 <app-scroll-to-top></app-scroll-to-top>

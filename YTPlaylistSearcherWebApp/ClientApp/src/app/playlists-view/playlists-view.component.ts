@@ -21,6 +21,7 @@ export class PlaylistsViewComponent {
       this.playlists = result;
     }, error => {
       this.isLoading = false;
+      this.errorMessage = error;
     });
   }
 

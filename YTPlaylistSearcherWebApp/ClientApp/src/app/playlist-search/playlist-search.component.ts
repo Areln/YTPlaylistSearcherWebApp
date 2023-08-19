@@ -33,7 +33,6 @@ export class PlaylistSearchComponent {
     this.defaultSearch = this.route.snapshot.paramMap.get('id');
 
     this.loadPlaylistForm = formBuilder.group({
-      //playlistLink: ['https://www.youtube.com/playlist?list=PLNL_Z6NDFLJZafBMO4kA9PbNBq0t-f9hx'],
       playlistLink: [this.defaultSearch],
     });
 
