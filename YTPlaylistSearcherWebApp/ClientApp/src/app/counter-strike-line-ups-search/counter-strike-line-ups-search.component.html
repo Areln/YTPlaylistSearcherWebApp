@@ -1,0 +1,32 @@
+<div *ngIf="isLoading == true">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+
+<div *ngIf="errorMessage != undefined && errorMessage != null" style="color:red;">{{errorMessage}}</div>
+
+<form [formGroup]="searchForm" (ngSubmit)="SubmitSearch()" #top>
+  <div>
+    <mat-form-field class="long-input">
+      <mat-label>Keywords</mat-label>
+      <input formControlName="input" matInput placeholder="">
+    </mat-form-field>
+
+    <button mat-raised-button style="margin-right: 1%;" type="submit" color="primary">Search</button>
+  </div>
+</form>
+
+<div fxLayout="row">
+  <!-- List of lineup results-->
+  <div *ngIf="results != undefined" class="lu-result">
+    <div *ngFor="let lu of results; index as i">
+      <mat-card class="lu-result-mat-card" fxLayout="row">
+        <img src="{{lu.path}}" style="margin-right:1%; border-radius:25px;" alt="thumbnail">
+        <div fxLayout="column">
+          GrenadeType-ThrowStyle-Map-Team-From-To-Land
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<app-scroll-to-top></app-scroll-to-top>

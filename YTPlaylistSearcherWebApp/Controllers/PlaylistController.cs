@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using YTPlaylistSearcherWebApp.Data;
 using YTPlaylistSearcherWebApp.DTOs;
 using YTPlaylistSearcherWebApp.Services;

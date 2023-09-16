@@ -1,5 +1,4 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, Directive, ElementRef, Inject, Input, Renderer2, SecurityContext } from '@angular/core';
+import { Component, SecurityContext } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PlaylistDTO, VideoDTO } from '../DTOs/PlaylistDTO';

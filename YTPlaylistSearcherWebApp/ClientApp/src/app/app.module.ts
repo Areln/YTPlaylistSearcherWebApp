@@ -14,6 +14,7 @@ import { SharedModule } from './shared/shared.module';
 import { ScrollToTopComponent } from './scroll-to-top/scroll-to-top.component';
 import { PlaylistSearchComponent } from './playlist-search/playlist-search.component';
 import { PlaylistsViewComponent } from './playlists-view/playlists-view.component';
+import { CounterStrikeLineUpsSearchComponent } from './counter-strike-line-ups-search/counter-strike-line-ups-search.component';
 
 @NgModule({
   declarations: [
@@ -24,16 +25,17 @@ import { PlaylistsViewComponent } from './playlists-view/playlists-view.componen
     FetchDataComponent,
     PlaylistSearchComponent,
     ScrollToTopComponent,
-    PlaylistsViewComponent
+    PlaylistsViewComponent,
+    CounterStrikeLineUpsSearchComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
+     /* { path: '', component: HomeComponent, pathMatch: 'full' },*/
       { path: 'search/:id', component: HomeComponent, pathMatch: 'full' },
       { path: 'playlists', component: PlaylistsViewComponent },
-      { path: 'videos', component: PlaylistsViewComponent },
+      { path: 'cs/lineups', component: CounterStrikeLineUpsSearchComponent }
       //{ path: 'counter', component: CounterComponent },
       //{ path: 'fetch-data', component: FetchDataComponent },
 

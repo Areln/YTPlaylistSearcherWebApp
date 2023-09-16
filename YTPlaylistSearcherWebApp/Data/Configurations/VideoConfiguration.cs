@@ -50,7 +50,7 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
                 .WithMany(p => p.Videos)
                 .HasPrincipalKey(p => p.Id)
                 .HasForeignKey(d => d.PlaylistId)
-                .HasConstraintName("FK_VIDEOS_PLAYLISTS");
+                .HasConstraintName("FK_Videos_Playlists");
 
             OnConfigurePartial(entity);
         }
