@@ -16,6 +16,10 @@
 
     <button *ngIf="playlist != undefined" mat-raised-button type="button" color="primary" (click)="RefreshPlaylist()">Refresh</button>
   </div>
+
+  <!-- Display curated playlists -->
+  <app-playlists-view></app-playlists-view>
+
 </form>
 
 <!-- Selected Playlist details-->

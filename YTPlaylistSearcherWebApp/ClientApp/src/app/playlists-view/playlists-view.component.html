@@ -15,7 +15,21 @@
     <div *ngIf="playlists">
       <div *ngFor="let playlist of playlists; index as i">
         <a class="nav-link text-dark" [routerLink]="['/search', playlist.playlistID]">
-          {{i+1}}: {{playlist.playlistTitle}}
+
+          <mat-card class="listitemvideo">
+            <div fxLayout="row">
+              <div>
+                <div>
+                  {{playlist.playlistTitle}}
+                </div>
+                <div>
+                  Playlist Owner: {{playlist.channelOwner}}
+                </div>
+              </div>
+
+            </div>
+          </mat-card>
+
         </a>
       </div>
     </div>

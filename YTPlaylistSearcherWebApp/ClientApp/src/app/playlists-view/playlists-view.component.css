@@ -1,0 +1,44 @@
+@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+.listitemvideo {
+  padding: 10px;
+  margin: 10px;
+  /*  background-color: #272727;*/
+  background-color: #673ab7;
+  /*  font-size: large;*/
+  border-radius: 25px;
+  font-family: Roboto, sans-serif;
+  max-width: none;
+  color: white;
+}
+
+  .listitemvideo:hover {
+    background-color: #6f42c1;
+  }
+
+.thumbnail {
+  width: 200px;
+}
+
+.video-results {
+  /*  max-height: 900px;*/
+  overflow: auto;
+  max-width: 70%;
+}
+
+.form {
+  background-color: #0f0f0f;
+}
+
+.a.video-link {
+  color: white;
+  text-decoration: none;
+}
+
+  .a.video-link:link {
+    color: white;
+  }
+
+  .a.video-link:visited {
+    color: white
+  }

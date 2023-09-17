@@ -47,14 +47,17 @@ export class PlaylistSearchComponent {
 
   public getPlaylistLinkInput(): string {
     var url = this.loadPlaylistForm.controls.playlistLink.value as string;
-    if (url.includes('playlist?list=')) {
-      this.playlistID = this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
-    }
-    else {
-      this.playlistID = this.loadPlaylistForm.controls.playlistLink.value;
+
+    if (url == null || url == undefined) {
+      return '';
     }
 
-    return this.playlistID;
+    if (url.includes('playlist?list=')) {
+      return this.loadPlaylistForm.controls.playlistLink.value.split('=')[1];
+    }
+    else {
+      return this.loadPlaylistForm.controls.playlistLink.value;
+    }
   }
 
   public getSearchInput(): string {
@@ -63,7 +66,11 @@ export class PlaylistSearchComponent {
 
   public PlaylistSubmit() {
 
-    this.getPlaylistLinkInput();
+    this.playlistID = this.getPlaylistLinkInput();
+
+    if (this.playlistID == '') {
+      return;
+    }
 
     this.isLoading = true;
 
@@ -78,8 +85,6 @@ export class PlaylistSearchComponent {
         this.errorMessage = 'Error!';
         this.isLoading = false;
       });
-
-
   }
 
   public ResultsSearch() {
