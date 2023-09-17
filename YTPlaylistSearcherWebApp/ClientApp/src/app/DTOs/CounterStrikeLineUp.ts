@@ -1,9 +1,9 @@
 export interface ILineUpDTO {
   grenadeType: string,
   throwStyle: string,
-  mapName: string,
+  map: string,
   team: string,
   from: string,
-  land: string,
+  to: string,
   path: string,
 }

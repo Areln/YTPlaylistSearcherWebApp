@@ -32,7 +32,7 @@ import { CounterStrikeLineUpsSearchComponent } from './counter-strike-line-ups-s
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     RouterModule.forRoot([
-     /* { path: '', component: HomeComponent, pathMatch: 'full' },*/
+      { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'search/:id', component: HomeComponent, pathMatch: 'full' },
       { path: 'playlists', component: PlaylistsViewComponent },
       { path: 'cs/lineups', component: CounterStrikeLineUpsSearchComponent }

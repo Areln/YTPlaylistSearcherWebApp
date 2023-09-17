@@ -16,7 +16,7 @@ export class PlaylistSearchComponent {
   errorMessage: string | null | undefined;
   loadPlaylistForm!: FormGroup;
   resultSearchForm!: FormGroup;
-  playlist!: PlaylistDTO;
+  playlist!: PlaylistDTO | null;
   playlistID!: string;
   defaultSearch: string | null;
   videosToDisplay!: VideoDTO[];
@@ -84,19 +84,22 @@ export class PlaylistSearchComponent {
 
   public ResultsSearch() {
     var searchString = this.getSearchInput().toLowerCase();
-    this.videosToDisplay = this.playlist.videos.filter(x => {
-      if (x.channelTitle != undefined) {
-        if (x.channelTitle.toLowerCase().includes(searchString)) {
-          return true;
+
+    if (this.playlist != null) {
+      this.videosToDisplay = this.playlist.videos.filter(x => {
+        if (x.channelTitle != undefined) {
+          if (x.channelTitle.toLowerCase().includes(searchString)) {
+            return true;
+          }
         }
-      }
-      if (x.title != undefined) {
-        if (x.title.toLowerCase().includes(searchString)) {
-          return true;
+        if (x.title != undefined) {
+          if (x.title.toLowerCase().includes(searchString)) {
+            return true;
+          }
         }
-      }
-      return false;
-    });
+        return false;
+      });
+    }
   }
 
   public ClearSearchString() {
@@ -125,4 +128,10 @@ export class PlaylistSearchComponent {
     this.ytEmbed = this.sanitizer.bypassSecurityTrustResourceUrl((this.ytEmbedSource + id + '?list=' + this.playlistID));
   }
 
+  public DeselectPlaylist() {
+    this.ClearSearchString();
+    this.playlist = null;
+    this.videosToDisplay = [];
+    this.loadPlaylistForm.controls.playlistLink.patchValue('');
+  }
 }

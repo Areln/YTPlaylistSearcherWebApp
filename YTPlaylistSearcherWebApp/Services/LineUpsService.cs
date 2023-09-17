@@ -20,12 +20,12 @@ namespace YTPlaylistSearcherWebApp.Services
             {
                 Id = x.Id,
                 Path = x.Path,
-                GrenadeType = x.GrenadeType.Name,
-                ThrowStyle = x.ThrowStyleType.Name,
-                Map = x.Map.Name,
+                GrenadeType = x.GrenadeType?.Name,
+                ThrowStyle = x.ThrowStyleType?.Name,
+                Map = x.Map?.Name,
                 MapPath = "TODO: add column for the map picture",
-                Team = x.Team.Name,
-                TeamAbbreviation = x.Team.Abbreviation,
+                Team = x.Team?.Name,
+                TeamAbbreviation = x.Team?.Abbreviation,
                 From = x.From,
                 To = x.To,
             });

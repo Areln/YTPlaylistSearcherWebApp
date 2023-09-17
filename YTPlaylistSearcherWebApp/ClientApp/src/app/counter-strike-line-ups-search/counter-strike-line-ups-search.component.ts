@@ -20,6 +20,10 @@ export class CounterStrikeLineUpsSearchComponent {
   constructor(private formBuilder: FormBuilder,
     private _csService: CounterStrikeService) { }
 
+  ngOnInit() {
+    this.SubmitSearch();
+  }
+
   SubmitSearch() {
     // TODO get input from searchForm
     this._csService.SubmitSearch("").subscribe(data => {

@@ -4,6 +4,8 @@
 
 <div *ngIf="errorMessage != undefined && errorMessage != null" style="color:red;">{{errorMessage}}</div>
 
+<h1 style="color:red;">! This page is a work in progress !</h1>
+
 <form [formGroup]="searchForm" (ngSubmit)="SubmitSearch()" #top>
   <div>
     <mat-form-field class="long-input">
@@ -20,9 +22,13 @@
   <div *ngIf="results != undefined" class="lu-result">
     <div *ngFor="let lu of results; index as i">
       <mat-card class="lu-result-mat-card" fxLayout="row">
-        <img src="{{lu.path}}" style="margin-right:1%; border-radius:25px;" alt="thumbnail">
+        <img src="{{lu.path}}" style="margin-right:1%; border-radius:25px; max-width: 30%;" alt="thumbnail">
         <div fxLayout="column">
-          GrenadeType-ThrowStyle-Map-Team-From-To-Land
+          <label>Grenade Type: {{lu.grenadeType}}</label>
+          <label>Throw Style: {{lu.throwStyle}}</label>
+          <label>Map: {{lu.map}}</label>
+          <label>Team: {{lu.team}}</label>
+          <label>From {{lu.from}} to {{lu.to}}</label>
         </div>
       </mat-card>
     </div>
