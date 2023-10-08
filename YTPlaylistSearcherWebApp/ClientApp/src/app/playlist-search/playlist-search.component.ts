@@ -4,6 +4,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PlaylistDTO, VideoDTO } from '../DTOs/PlaylistDTO';
 import { ActivatedRoute } from '@angular/router'
 import { PlaylistService } from '../services/PlaylistService';
+import { DataSource } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-playlist-search',
@@ -22,6 +23,7 @@ export class PlaylistSearchComponent {
   videosToDisplay!: VideoDTO[];
   ytEmbedSource: string = 'https://www.youtube.com/embed/';
   ytEmbed!: SafeResourceUrl;
+  displayedColumns: string[] = ['position', 'result'];
 
   constructor(
     private formBuilder: FormBuilder,

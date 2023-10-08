@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 
+import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -38,6 +39,7 @@ import { MatCardModule } from '@angular/material/card';
     MatCardModule,
     FlexLayoutModule,
     MatToolbarModule,
+    MatTableModule
   ]
 })
 export class SharedModule { }
