@@ -15,6 +15,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
   imports: [
@@ -39,7 +40,8 @@ import { MatCardModule } from '@angular/material/card';
     MatCardModule,
     FlexLayoutModule,
     MatToolbarModule,
-    MatTableModule
+    MatTableModule,
+    MatExpansionModule
   ]
 })
 export class SharedModule { }

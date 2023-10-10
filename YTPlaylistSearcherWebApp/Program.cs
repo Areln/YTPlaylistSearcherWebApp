@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using YTPlaylistSearcherWebApp.Data;
 using YTPlaylistSearcherWebApp.Data.CS;
 using YTPlaylistSearcherWebApp.Repositories;
@@ -8,6 +11,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 //builder.Services.AddControllersWithViews();
+builder.Services.AddAuthentication(opt => {
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "https://localhost:7298",
+            ValidAudience = "https://localhost:7298",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"))
+        };
+    });
+
 builder.Services.AddControllers();
 
 builder.Services.AddHttpClient();
@@ -15,6 +36,9 @@ builder.Services.AddTransient<IPlaylistService, PlaylistService>();
 builder.Services.AddTransient<IPlaylistRepository, PlaylistRepository>();
 builder.Services.AddTransient<ILineUpsService, LineUpsService>();
 builder.Services.AddTransient<ILineUpsRepository, LineUpsRepository>();
+builder.Services.AddTransient<ILoginService, LoginService>();
+builder.Services.AddTransient<ILoginRepository, LoginRepository>();
+builder.Services.AddTransient<ITokenService, TokenService>();
 
 builder.Services.AddDbContext<YTPSContext>(options => options.UseMySql(builder.Configuration.GetValue<string>("ConnectionStringYTPS"), ServerVersion.Create(1, 0, 0, Pomelo.EntityFrameworkCore.MySql.Infrastructure.ServerType.MySql)));
 builder.Services.AddDbContext<CSContext>(options => options.UseMySql(builder.Configuration.GetValue<string>("ConnectionStringCS"), ServerVersion.Create(1, 0, 0, Pomelo.EntityFrameworkCore.MySql.Infrastructure.ServerType.MySql)));
@@ -31,6 +55,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",

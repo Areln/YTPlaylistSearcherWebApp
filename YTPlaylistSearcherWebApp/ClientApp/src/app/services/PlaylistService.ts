@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import { PlaylistDTO } from "../DTOs/PlaylistDTO";
+import { AuthenticatedResponse } from "../login/login.component";
 
 @Injectable({providedIn: 'root'})
 export class PlaylistService {
@@ -10,6 +11,15 @@ export class PlaylistService {
     @Inject('BASE_URL') private baseUrl: string,
     private sanitizer: DomSanitizer) {
 
+  }
+
+  SubmitLogin(loginData: any)
+  {
+    return this.http.post<AuthenticatedResponse>(this.baseUrl + 'login/Submit', loginData);
+  }
+
+  SubmitRegistration(registerData: any) {
+    return this.http.post<AuthenticatedResponse>(this.baseUrl + 'login/Register', registerData);
   }
 
   GetPlaylist(id: string) {

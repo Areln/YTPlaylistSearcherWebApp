@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-root',
@@ -6,4 +7,15 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app';
+
+  constructor(private jwtHelper: JwtHelperService) { }
+
+  isLoggedIn() {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

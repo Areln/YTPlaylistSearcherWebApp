@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using YTPlaylistSearcherWebApp.Data;
 using YTPlaylistSearcherWebApp.DTOs;
@@ -22,7 +23,7 @@ namespace YTPlaylistSearcherWebApp.Controllers
             _context = context;
         }
 
-        [HttpGet("GetPlaylistFromYT")]
+        [HttpGet("GetPlaylistFromYT"), Authorize(Roles = "Admin, Trusted, Standard, Guest")]
         public async Task<IActionResult> GetPlaylistFromYT([FromQuery] string playlistID)
         {
             try
@@ -37,7 +38,7 @@ namespace YTPlaylistSearcherWebApp.Controllers
             }
         }
 
-        [HttpGet("GetPlaylist")]
+        [HttpGet("GetPlaylist"), Authorize(Roles = "Admin, Trusted, Standard, Guest")]
         public async Task<IActionResult> GetPlaylist([FromQuery] string playlistID)
         {
             try
@@ -61,7 +62,7 @@ namespace YTPlaylistSearcherWebApp.Controllers
             }
         }
 
-        [HttpGet("RefreshPlaylist")]
+        [HttpGet("RefreshPlaylist"), Authorize(Roles = "Admin, Trusted, Standard, Guest")]
         public async Task<IActionResult> RefreshPlaylist([FromQuery] string playlistID)
         {
             try
@@ -76,7 +77,7 @@ namespace YTPlaylistSearcherWebApp.Controllers
             }
         }
 
-        [HttpGet("GetPlaylists")]
+        [HttpGet("GetPlaylists"), Authorize(Roles = "Admin, Trusted, Standard, Guest")]
         public async Task<IActionResult> GetPlaylists()
         {
             try

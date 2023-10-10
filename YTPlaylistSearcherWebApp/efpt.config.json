@@ -16,7 +16,31 @@
    "T4TemplatePath": null,
    "Tables": [
       {
+         "Name": "accountstatuses",
+         "ObjectType": 0
+      },
+      {
          "Name": "playlists",
+         "ObjectType": 0
+      },
+      {
+         "Name": "policies",
+         "ObjectType": 0
+      },
+      {
+         "Name": "rolepolicies",
+         "ObjectType": 0
+      },
+      {
+         "Name": "roles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "userauthentications",
+         "ObjectType": 0
+      },
+      {
+         "Name": "users",
          "ObjectType": 0
       },
       {

@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
+import { AuthGuard, HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -15,6 +15,12 @@ import { ScrollToTopComponent } from './scroll-to-top/scroll-to-top.component';
 import { PlaylistSearchComponent } from './playlist-search/playlist-search.component';
 import { PlaylistsViewComponent } from './playlists-view/playlists-view.component';
 import { CounterStrikeLineUpsSearchComponent } from './counter-strike-line-ups-search/counter-strike-line-ups-search.component';
+import { LoginComponent } from './login/login.component';
+import { JwtModule } from "@auth0/angular-jwt";
+
+export function tokenGetter() {
+  return localStorage.getItem("jwt");
+}
 
 @NgModule({
   declarations: [
@@ -26,16 +32,25 @@ import { CounterStrikeLineUpsSearchComponent } from './counter-strike-line-ups-s
     PlaylistSearchComponent,
     ScrollToTopComponent,
     PlaylistsViewComponent,
-    CounterStrikeLineUpsSearchComponent
+    CounterStrikeLineUpsSearchComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ["localhost:7298"],
+        disallowedRoutes: []
+      }
+    }),
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'search/:id', component: HomeComponent, pathMatch: 'full' },
-      { path: 'playlists', component: PlaylistsViewComponent },
-      { path: 'cs/lineups', component: CounterStrikeLineUpsSearchComponent }
+      { path: '', component: HomeComponent },
+      { path: 'search/:id', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+      { path: 'search', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+      { path: 'playlists', component: PlaylistsViewComponent, canActivate: [AuthGuard] },
+      { path: 'cs/lineups', component: CounterStrikeLineUpsSearchComponent, canActivate: [AuthGuard] }
       //{ path: 'counter', component: CounterComponent },
       //{ path: 'fetch-data', component: FetchDataComponent },
 
@@ -43,7 +58,7 @@ import { CounterStrikeLineUpsSearchComponent } from './counter-strike-line-ups-s
     BrowserAnimationsModule,
     SharedModule,
   ],
-  providers: [],
+  providers: [AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

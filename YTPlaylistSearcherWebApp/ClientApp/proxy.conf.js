@@ -9,7 +9,10 @@ const PROXY_CONFIG = [
       "/weatherforecast",
       "/playlist",
       "/lineups",
-      "/environment"
+      "/environment",
+      "/login",
+      "/debug",
+      "/token"
    ],
     target: target,
     secure: false,
