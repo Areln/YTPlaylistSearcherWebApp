@@ -16,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   imports: [
@@ -41,7 +42,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     FlexLayoutModule,
     MatToolbarModule,
     MatTableModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatPaginatorModule
   ]
 })
 export class SharedModule { }

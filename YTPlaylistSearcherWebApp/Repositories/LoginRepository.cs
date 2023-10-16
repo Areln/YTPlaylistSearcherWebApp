@@ -22,15 +22,26 @@ namespace YTPlaylistSearcherWebApp.Repositories
             return user;
         }
 
-        public async Task<User> GetUserByUserName(YTPSContext context, string username)
+        public async Task<User> GetUserByUserNameThenEmail(YTPSContext context, LoginModel loginData)
         {
             var user = context.Users
                 .Include(x => x.AuthenticationNavigation)
                 .Include(x => x.AccountStatusNavigation)
                 .Include(x => x.RoleNavigation)
                 .ThenInclude(x => x.Rolepolicies)
-                .Where(x => x.UserName == username)
+                .Where(x => x.UserName == loginData.UserName)
                 .FirstOrDefault();
+
+            if (user == null)
+            {
+                user = context.Users
+                    .Include(x => x.AuthenticationNavigation)
+                    .Include(x => x.AccountStatusNavigation)
+                    .Include(x => x.RoleNavigation)
+                    .ThenInclude(x => x.Rolepolicies)
+                    .Where(x => x.UserName == loginData.Email)
+                    .FirstOrDefault();
+            }
 
             return user;
         }
@@ -56,7 +67,7 @@ namespace YTPlaylistSearcherWebApp.Repositories
     public interface ILoginRepository
     {
         Task<User> AddAccount(YTPSContext context, User user);
-        Task<User> GetUserByUserName(YTPSContext context, String username);
+        Task<User> GetUserByUserNameThenEmail(YTPSContext context, LoginModel loginData);
         Task UpdateRefreshToken(YTPSContext context, UserDTO userDTO);
     }
 }

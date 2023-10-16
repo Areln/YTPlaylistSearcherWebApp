@@ -47,7 +47,7 @@ namespace YTPlaylistSearcherWebApp.Services
 
         public async Task<UserDTO> AttemptLogin(YTPSContext context, LoginModel loginData)
         {
-            var user = await _loginRepository.GetUserByUserName(context, loginData.UserName);
+            var user = await _loginRepository.GetUserByUserNameThenEmail(context, loginData);
 
             if (user == null)
             {
@@ -80,7 +80,7 @@ namespace YTPlaylistSearcherWebApp.Services
 
         public async Task<UserDTO> SubmitRegistration(YTPSContext context, LoginModel loginData)
         {
-            var user = await _loginRepository.GetUserByUserName(context, loginData.UserName);
+            var user = await _loginRepository.GetUserByUserNameThenEmail(context, loginData);
             if (user == null) 
             {
 
@@ -91,7 +91,7 @@ namespace YTPlaylistSearcherWebApp.Services
                 user = new User
                 {
                     UserName = loginData.UserName,
-                    Email = loginData.UserName,
+                    Email = loginData.Email,
                     AccountStatusNavigation = context.Accountstatuses.Where(x => x.StatusName == "Active").First(),
                     RoleNavigation = context.Roles.Where(x => x.RoleName == "Standard").First(),
                     AuthenticationNavigation = new Userauthentication
@@ -128,6 +128,7 @@ namespace YTPlaylistSearcherWebApp.Services
     {
         public int Id { get; set; }
         public string? UserName { get; set; }
+        public string? Email { get; set; }
         public string? Password { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime RefreshTokenExpiryTime { get; set; }

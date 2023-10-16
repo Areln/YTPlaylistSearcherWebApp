@@ -46,6 +46,12 @@
       </mat-expansion-panel-header>
       <div>
         <mat-form-field>
+          <mat-label>User Name</mat-label>
+          <input matInput formControlName="username" required>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
           <mat-label>Enter your email</mat-label>
           <input matInput placeholder="pat@example.com" formControlName="email" required>
         </mat-form-field>
@@ -61,6 +67,9 @@
           <mat-label>Confirm Password</mat-label>
           <input matInput type="password" formControlName="confirmPassword" required>
         </mat-form-field>
+      </div>
+      <div *ngIf="registerForm.errors?.['passwordMismatch'] && (registerForm.touched || registerForm.dirty)" class="cross-validation-error-message alert alert-danger">
+        Password fields must match.
       </div>
       <div>
         <button mat-raised-button color="primary" [disabled]="registerForm.status == 'INVALID'">Submit</button>

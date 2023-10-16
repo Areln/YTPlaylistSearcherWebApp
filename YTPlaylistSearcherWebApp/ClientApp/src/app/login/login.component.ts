@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PlaylistService } from '../services/PlaylistService';
 
@@ -31,10 +31,11 @@ export class LoginComponent {
     });
 
     this.registerForm = formBuilder.group({
+      username: [''],
       email: [''],
       password: [''],
       confirmPassword: [''],
-    });
+    }, { validators: PasswordInputsMatch });
 
   }
 
@@ -64,7 +65,11 @@ export class LoginComponent {
     console.log(this.loginForm);
     this.isLoading = true;
     if (this.registerForm.valid) {
-      this._playlistService.SubmitRegistration({ UserName: this.registerForm.controls.email.value, Password: this.registerForm.controls.password.value })
+      this._playlistService.SubmitRegistration({
+        UserName: this.registerForm.controls.username.value,
+        Email: this.registerForm.controls.email.value,
+        Password: this.registerForm.controls.password.value
+      })
         .subscribe({
           next: (response: AuthenticatedResponse) => {
             console.log(response);
@@ -84,6 +89,13 @@ export class LoginComponent {
     }
   }
 }
+
+/** A hero's name can't match the hero's alter ego */
+export const PasswordInputsMatch: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const password = control.get('password');
+  const confirmPassword = control.get('confirmPassword');
+  return password && confirmPassword && password.value !== confirmPassword.value ? { passwordMismatch: true } : null;
+};
 
 export interface LoginModel {
   username: string;

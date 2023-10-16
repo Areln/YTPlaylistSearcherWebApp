@@ -45,6 +45,11 @@ export class PlaylistSearchComponent {
       this.defaultSearch = sanitizer.sanitize(SecurityContext.URL, this.defaultSearch);
       this.PlaylistSubmit();
     }
+
+    route.params.subscribe(val => {
+      this.loadPlaylistForm.controls.playlistLink.patchValue(sanitizer.sanitize(SecurityContext.URL, this.route.snapshot.params.id));
+      this.PlaylistSubmit();
+    });
   }
 
   public getPlaylistLinkInput(): string {
@@ -67,7 +72,6 @@ export class PlaylistSearchComponent {
   }
 
   public PlaylistSubmit() {
-
     this.playlistID = this.getPlaylistLinkInput();
 
     if (this.playlistID == '') {

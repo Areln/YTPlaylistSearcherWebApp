@@ -14,7 +14,7 @@
 
     <div *ngIf="playlists">
       <div *ngFor="let playlist of playlists; index as i">
-        <a class="nav-link text-dark" [routerLink]="['/search', playlist.playlistID]">
+        <a class="nav-link text-dark" (click)="playlistClick(playlist.playlistID)">
 
           <mat-card class="listitemvideo">
             <div fxLayout="row">
