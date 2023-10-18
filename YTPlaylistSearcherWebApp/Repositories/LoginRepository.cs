@@ -29,19 +29,8 @@ namespace YTPlaylistSearcherWebApp.Repositories
                 .Include(x => x.AccountStatusNavigation)
                 .Include(x => x.RoleNavigation)
                 .ThenInclude(x => x.Rolepolicies)
-                .Where(x => x.UserName == loginData.UserName)
+                .Where(x => x.UserName == loginData.UserName || x.UserName == loginData.Email || x.Email == loginData.UserName)
                 .FirstOrDefault();
-
-            if (user == null)
-            {
-                user = context.Users
-                    .Include(x => x.AuthenticationNavigation)
-                    .Include(x => x.AccountStatusNavigation)
-                    .Include(x => x.RoleNavigation)
-                    .ThenInclude(x => x.Rolepolicies)
-                    .Where(x => x.UserName == loginData.Email)
-                    .FirstOrDefault();
-            }
 
             return user;
         }
