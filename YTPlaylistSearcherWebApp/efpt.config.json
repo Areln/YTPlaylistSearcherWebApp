@@ -20,7 +20,15 @@
          "ObjectType": 0
       },
       {
+         "Name": "followers",
+         "ObjectType": 0
+      },
+      {
          "Name": "playlists",
+         "ObjectType": 0
+      },
+      {
+         "Name": "playlistsearchhistories",
          "ObjectType": 0
       },
       {
@@ -33,6 +41,10 @@
       },
       {
          "Name": "roles",
+         "ObjectType": 0
+      },
+      {
+         "Name": "sharedposts",
          "ObjectType": 0
       },
       {

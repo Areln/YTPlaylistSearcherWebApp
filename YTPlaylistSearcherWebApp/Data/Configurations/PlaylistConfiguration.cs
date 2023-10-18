@@ -15,26 +15,20 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Playlist> entity)
         {
-            entity.HasKey(e => new { e.Id, e.PlaylistId })
-                .HasName("PRIMARY")
-                .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
-
             entity.ToTable("playlists");
 
             entity.HasIndex(e => e.Id, "playlistID_UNIQUE")
                 .IsUnique();
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("ID");
-
-            entity.Property(e => e.PlaylistId)
-                .HasMaxLength(150)
-                .HasColumnName("playlistID");
+            entity.Property(e => e.Id).HasColumnName("ID");
 
             entity.Property(e => e.ChannelTitle)
                 .HasMaxLength(45)
                 .HasColumnName("channelTitle");
+
+            entity.Property(e => e.PlaylistId)
+                .HasMaxLength(150)
+                .HasColumnName("playlistID");
 
             entity.Property(e => e.PlaylistTitle)
                 .HasMaxLength(150)

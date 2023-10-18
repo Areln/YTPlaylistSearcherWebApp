@@ -48,7 +48,6 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
 
             entity.HasOne(d => d.Playlist)
                 .WithMany(p => p.Videos)
-                .HasPrincipalKey(p => p.Id)
                 .HasForeignKey(d => d.PlaylistId)
                 .HasConstraintName("FK_Videos_Playlists");
 

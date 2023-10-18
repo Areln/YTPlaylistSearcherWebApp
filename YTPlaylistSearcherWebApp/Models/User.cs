@@ -7,6 +7,13 @@ namespace YTPlaylistSearcherWebApp.Models
 {
     public partial class User
     {
+        public User()
+        {
+            FollowerFolloweeNavigations = new HashSet<Follower>();
+            FollowerFollower1Navigations = new HashSet<Follower>();
+            Playlistsearchhistories = new HashSet<Playlistsearchhistory>();
+        }
+
         public int Id { get; set; }
         public string UserName { get; set; } = null!;
         public string? Email { get; set; }
@@ -22,5 +29,8 @@ namespace YTPlaylistSearcherWebApp.Models
         public virtual Accountstatus AccountStatusNavigation { get; set; } = null!;
         public virtual Userauthentication AuthenticationNavigation { get; set; } = null!;
         public virtual Role RoleNavigation { get; set; } = null!;
+        public virtual ICollection<Follower> FollowerFolloweeNavigations { get; set; }
+        public virtual ICollection<Follower> FollowerFollower1Navigations { get; set; }
+        public virtual ICollection<Playlistsearchhistory> Playlistsearchhistories { get; set; }
     }
 }
