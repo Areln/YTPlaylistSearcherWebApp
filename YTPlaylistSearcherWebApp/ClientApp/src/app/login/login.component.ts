@@ -90,7 +90,7 @@ export class LoginComponent {
   }
 }
 
-/** A hero's name can't match the hero's alter ego */
+/** make sure password fields are the same */
 export const PasswordInputsMatch: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password');
   const confirmPassword = control.get('confirmPassword');

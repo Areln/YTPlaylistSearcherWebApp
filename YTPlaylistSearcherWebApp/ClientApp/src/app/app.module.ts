@@ -53,7 +53,7 @@ export function tokenGetter() {
       }
     }),
     RouterModule.forRoot([
-      { path: 'login', component: LoginComponent },
+      { path: 'loggedout', component: LoginComponent },
       { path: 'search/:id', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'search', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: '', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },

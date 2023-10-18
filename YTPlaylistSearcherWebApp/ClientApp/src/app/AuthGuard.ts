@@ -16,7 +16,7 @@ export class AuthGuard implements CanActivate {
     }
     const isRefreshSuccess = await this.tryRefreshingTokens(token);
     if (!isRefreshSuccess) {
-      this.router.navigate(["/login"]);
+      this.router.navigate(["/loggedout"]);
     }
 
     return isRefreshSuccess;
@@ -31,24 +31,29 @@ export class AuthGuard implements CanActivate {
     const credentials = JSON.stringify({ accessToken: token, refreshToken: refreshToken });
     let isRefreshSuccess: boolean;
 
-    const refreshRes = await new Promise<AuthenticatedResponse>((resolve, reject) => {
-      this.http.post<AuthenticatedResponse>(this.baseUrl + "token/refresh", credentials, {
-        headers: new HttpHeaders({
-          "Content-Type": "application/json"
-        })
-      }).subscribe({
-        next: (res: AuthenticatedResponse) => resolve(res),
-        error: (_) => {
-          reject;
-          isRefreshSuccess = false;
-          console.log(_);
-        }
+    try {
+      const refreshRes = await new Promise<AuthenticatedResponse>((resolve, reject) => {
+        this.http.post<AuthenticatedResponse>(this.baseUrl + "token/refresh", credentials, {
+          headers: new HttpHeaders({
+            "Content-Type": "application/json"
+          })
+        }).subscribe({
+          next: (res: AuthenticatedResponse) => resolve(res),
+          error: (_) => {
+            reject;
+            isRefreshSuccess = false;
+            console.log(_);
+          }
+        });
       });
-    });
 
-    localStorage.setItem("jwt", refreshRes.token);
-    localStorage.setItem("refreshToken", refreshRes.refreshToken);
-    isRefreshSuccess = true;
+      localStorage.setItem("jwt", refreshRes.token);
+      localStorage.setItem("refreshToken", refreshRes.refreshToken);
+      isRefreshSuccess = true;
+
+    } catch (e) {
+      isRefreshSuccess = false;
+    }
 
     return isRefreshSuccess;
   }

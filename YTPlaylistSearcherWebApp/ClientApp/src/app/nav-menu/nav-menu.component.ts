@@ -16,7 +16,7 @@ export class NavMenuComponent {
   public logout() {
     localStorage.removeItem("jwt");
     localStorage.removeItem("refreshToken");
-    this.router.navigate(["/login"]);
+    this.router.navigate(["/loggedout"]);
   }
 
   collapse() {
