@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Linq;
 using YTPlaylistSearcherWebApp.Data;
+using YTPlaylistSearcherWebApp.Data.CS;
 using YTPlaylistSearcherWebApp.DTOs;
 using YTPlaylistSearcherWebApp.Mappers;
 using YTPlaylistSearcherWebApp.Models;
@@ -126,6 +127,30 @@ namespace YTPlaylistSearcherWebApp.Services
             var result = await _playlistRepository.GetPlaylists(_context);
             return PlaylistMapper.MapToDTO(result);
         }
+
+        public async Task<IEnumerable<SharedPostDTO>> GetSharedPosts(YTPSContext _context)
+        {
+            var result = await _playlistRepository.GetSharedPosts(_context);
+            return PlaylistMapper.MapToDTO(result);
+        }
+
+        public async Task<int> CreateSharedPost(YTPSContext context, CreateSharedPostModel sharedPostModel)
+        {
+            var newPost = new Sharedpost
+            {
+                User = context.Users.Where(x => x.UserName == sharedPostModel.UserName).FirstOrDefault(),
+                Content = sharedPostModel.Type == "video" ? context.Videos.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().Title : context.Playlists.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().PlaylistTitle,
+                CreatedDate = DateTime.Now,
+                Thumbnail = sharedPostModel.Type == "video" ? context.Videos.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().Thumbnail : string.Empty,
+                Link = sharedPostModel.Type == "video" ? context.Videos.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().VideoId : context.Playlists.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().PlaylistId,
+                Type = sharedPostModel.Type,
+            };
+
+            await _playlistRepository.AddSharedPost(context, newPost);
+            await context.SaveChangesAsync();
+
+            return newPost.Id;
+        }
     }
 
     public interface IPlaylistService
@@ -136,5 +161,7 @@ namespace YTPlaylistSearcherWebApp.Services
         Task<PlaylistDTO> GetPlaylistSorted(YTPSContext context, string playlistID, SearchChipBagDTO bag);
         Task<PlaylistDTO> RefreshPlaylist(YTPSContext context, string playlistID);
         Task<IEnumerable<PlaylistDTO>> GetPlaylists(YTPSContext _context);
+        Task<IEnumerable<SharedPostDTO>> GetSharedPosts(YTPSContext _context);
+        Task<int> CreateSharedPost(YTPSContext context, CreateSharedPostModel sharedPostModel);
     }
 }

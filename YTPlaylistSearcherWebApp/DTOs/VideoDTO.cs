@@ -2,6 +2,7 @@
 {
     public class VideoDTO
     {
+        public int ID { get; set; }
         public string VideoID { get; set; }
         public string Title { get; set; }
         public string ChannelTitle { get; set; }

@@ -14,11 +14,13 @@ namespace YTPlaylistSearcherWebApp.Mappers
         {
             return new PlaylistDTO
             {
+                ID = playlistModel.Id,
                 PlaylistID = playlistModel.PlaylistId,
                 PlaylistTitle = playlistModel.PlaylistTitle,
                 ChannelOwner = playlistModel.ChannelTitle,
                 Videos = playlistModel.Videos.Select(x => new VideoDTO
                 {
+                    ID = x.Id,
                     VideoID = x.VideoId,
                     Title = x.Title,
                     Description = x.Description,
@@ -33,18 +35,33 @@ namespace YTPlaylistSearcherWebApp.Mappers
         {
             return list.Select(x => new PlaylistDTO
             {
+                ID = x.Id,
                 PlaylistID = x.PlaylistId,
                 PlaylistTitle = x.PlaylistTitle,
                 ChannelOwner = x.ChannelTitle,
-                Videos = x.Videos.Select(x => new VideoDTO
+                Videos = x.Videos.Select(y => new VideoDTO
                 {
-                    VideoID = x.VideoId,
-                    Title = x.Title,
-                    Description = x.Description,
-                    ChannelTitle = x.ChannelTitle,
-                    PublishedDate = x.PublishedDate,
-                    Thumbnail = x.Thumbnail
+                    ID = y.Id,
+                    VideoID = y.VideoId,
+                    Title = y.Title,
+                    Description = y.Description,
+                    ChannelTitle = y.ChannelTitle,
+                    PublishedDate = y.PublishedDate,
+                    Thumbnail = y.Thumbnail
                 })
+            });
+        }
+
+        public static IEnumerable<SharedPostDTO> MapToDTO(IEnumerable<Sharedpost> list)
+        {
+            return list.Select(x => new SharedPostDTO
+            {
+                UserName = x.User.UserName,
+                Content = x.Content,
+                Link = x.Link,
+                SharedDate = x.CreatedDate.ToString(),
+                Thumbnail = x.Thumbnail,
+                Type = x.Type,
             });
         }
 

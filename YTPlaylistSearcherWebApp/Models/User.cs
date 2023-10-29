@@ -12,6 +12,7 @@ namespace YTPlaylistSearcherWebApp.Models
             FollowerFolloweeNavigations = new HashSet<Follower>();
             FollowerFollower1Navigations = new HashSet<Follower>();
             Playlistsearchhistories = new HashSet<Playlistsearchhistory>();
+            Sharedposts = new HashSet<Sharedpost>();
         }
 
         public int Id { get; set; }
@@ -32,5 +33,6 @@ namespace YTPlaylistSearcherWebApp.Models
         public virtual ICollection<Follower> FollowerFolloweeNavigations { get; set; }
         public virtual ICollection<Follower> FollowerFollower1Navigations { get; set; }
         public virtual ICollection<Playlistsearchhistory> Playlistsearchhistories { get; set; }
+        public virtual ICollection<Sharedpost> Sharedposts { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { PlaylistDTO } from '../DTOs/PlaylistDTO';
 import { PlaylistService } from '../services/PlaylistService';
@@ -13,6 +13,7 @@ export class PlaylistsViewComponent {
   isLoading: boolean = false;
   errorMessage: string | null | undefined;
   playlists!: PlaylistDTO[];
+  @Output() selectedPlaylist = new EventEmitter<string>();
 
   constructor(private _playlistService: PlaylistService, private router: Router, @Inject('BASE_URL') private baseUrl: string) {
     this.isLoading = true;
@@ -27,7 +28,8 @@ export class PlaylistsViewComponent {
   }
 
   playlistClick(playlistID: string) {
-    this.router.navigate(['/search/' + playlistID]);
+    this.selectedPlaylist.emit(playlistID);
+    //this.router.navigate(['/search/' + playlistID]);
   }
 
 }

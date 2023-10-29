@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Security.Claims;
 using YTPlaylistSearcherWebApp.Data;
 using YTPlaylistSearcherWebApp.DTOs;
+using YTPlaylistSearcherWebApp.Models;
 using YTPlaylistSearcherWebApp.Services;
 
 namespace YTPlaylistSearcherWebApp.Controllers
@@ -88,6 +90,37 @@ namespace YTPlaylistSearcherWebApp.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, "GetPlaylists");
+                return BadRequest(e.Message + " " + e.InnerException);
+            }
+        }
+
+        [HttpGet("GetSharedPosts"), Authorize(Roles = "Admin, Trusted, Standard, Guest")]
+        public async Task<IActionResult> GetSharedPosts()
+        {
+            try
+            {
+                var playlistDto = await _playlistService.GetSharedPosts(_context);
+                return Ok(playlistDto);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "GetSharedPosts");
+                return BadRequest(e.Message + " " + e.InnerException);
+            }
+        }
+
+        [HttpPost("CreateSharedPost"), Authorize(Roles = "Admin, Trusted, Standard")]
+        public async Task<IActionResult> CreateSharedPost([FromBody] CreateSharedPostModel sharedPostModel)
+        {
+            try
+            {
+                sharedPostModel.UserName = User.FindFirst(ClaimTypes.Name).Value;
+                var postID = await _playlistService.CreateSharedPost(_context, sharedPostModel);
+                return Ok(postID);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "GetSharedPosts");
                 return BadRequest(e.Message + " " + e.InnerException);
             }
         }

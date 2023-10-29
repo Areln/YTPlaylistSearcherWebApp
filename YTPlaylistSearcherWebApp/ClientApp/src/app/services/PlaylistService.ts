@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import { PlaylistDTO } from "../DTOs/PlaylistDTO";
+import { SharedPostDTO } from "../DTOs/SharedPostDTO";
 import { AuthenticatedResponse } from "../login/login.component";
 
 @Injectable({providedIn: 'root'})
@@ -32,5 +33,13 @@ export class PlaylistService {
 
   GetPlaylists() {
     return this.http.get<PlaylistDTO[]>(this.baseUrl + 'playlist/GetPlaylists')
+  }
+
+  GetSharedPosts() {
+    return this.http.get<SharedPostDTO[]>(this.baseUrl + 'playlist/GetSharedPosts')
+  }
+
+  CreateSharedPost(post: any) {
+    return this.http.post<number>(this.baseUrl + 'playlist/CreateSharedPost', post)
   }
 }

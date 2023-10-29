@@ -1,105 +1,131 @@
-<div *ngIf="isLoading == true">
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-</div>
 
-<div *ngIf="errorMessage != undefined && errorMessage != null" style="color:red;">{{errorMessage}}</div>
+<div fxLayout="row">
 
-<!-- Playlist Input Bar -->
-<form [formGroup]="loadPlaylistForm" (ngSubmit)="PlaylistSubmit()" #top *ngIf="playlist == null">
-  <div>
-    <mat-form-field class="long-input">
-      <mat-label>Playlist</mat-label>
-      <input formControlName="playlistLink" matInput placeholder="Link or ID">
-    </mat-form-field>
-
-    <button mat-raised-button style="margin-right: 1%;" type="submit" color="primary">Submit</button>
-
-    <button *ngIf="playlist != undefined" mat-raised-button type="button" color="primary" (click)="RefreshPlaylist()">Refresh</button>
+  <div fxFlex="25" style="padding: 3%">
+    <app-shared-posts-feed></app-shared-posts-feed>
   </div>
 
-  <!-- Display curated playlists -->
-  <app-playlists-view></app-playlists-view>
-
-</form>
-
-<!-- Selected Playlist details-->
-<mat-card class="listitemvideo" *ngIf="playlist != null">
-  <div fxLayout="row">
-    <div fxFlex="97">
-      <div>
-        {{playlist.playlistTitle}}
+  <div fxFlex="50">
+    <div>
+      <div *ngIf="isLoading == true">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       </div>
-      <div>
-        Playlist Owner: {{playlist.channelOwner}}
-      </div>
-      <div *ngIf="videosToDisplay != undefined">
-        Results: {{videosToDisplay.length}}
-      </div>
-    </div>
 
-    <div fxFlex="3">
-      <button mat-mini-fab color="accent" aria-label="de-select play list" (click)="DeselectPlaylist()">
-        <mat-icon>clear</mat-icon>
-      </button>
-    </div>
+      <div *ngIf="errorMessage != undefined && errorMessage != null" style="color:red;">{{errorMessage}}</div>
 
-  </div>
-</mat-card>
+      <!-- Playlist Input Bar -->
+      <form [formGroup]="loadPlaylistForm" (ngSubmit)="PlaylistSubmit()" #top *ngIf="playlist == null">
+        <div>
+          <mat-form-field class="long-input">
+            <mat-label>Playlist</mat-label>
+            <input formControlName="playlistLink" matInput placeholder="Link or ID">
+          </mat-form-field>
 
-<!-- Search Bar -->
-<form *ngIf="playlist != undefined" [formGroup]="resultSearchForm" (ngSubmit)="ResultsSearch()">
-  <div>
-    <mat-form-field class="long-input">
-      <mat-label>Search</mat-label>
-      <input formControlName="searchInput" matInput placeholder="Video Title or Channel Name">
-    </mat-form-field>
+          <button mat-raised-button style="margin-right: 1%;" type="submit" color="primary">Submit</button>
 
-    <button mat-raised-button type="submit" color="primary" style="margin-right: 1%;">Submit</button>
-
-    <button mat-raised-button type="button" color="primary" style="margin-right: 1%;" (click)="ClearSearchString()">Clear</button>
-  </div>
-</form>
-
-<div *ngIf="playlist != undefined" class="video-results">
-  <mat-table [dataSource]="videosToDisplay" class="mat-elevation-z8">
-
-    <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
-    <!-- Position Column -->
-    <ng-container matColumnDef="position">
-      <th mat-header-cell *matHeaderCellDef> No. </th>
-      <td mat-cell *matCellDef="let i = index"> {{i+1}} </td>
-    </ng-container>
-
-    <!-- Name Column -->
-    <ng-container matColumnDef="result">
-      <th mat-header-cell *matHeaderCellDef> Result </th>
-      <td mat-cell *matCellDef="let element; let i = index">
-        <a style="color:white; text-decoration:none;" href="{{'https://www.youtube.com/watch?v=' + element.videoID}}" target="_blank">
-          <mat-card class="listitemvideo" fxLayout="row" (click)="selectVideo(element.videoID)">
-            <img src="{{element.thumbnail}}" style="max-width:15%; margin-right:1%; border-radius:25px;" alt="thumbnail">
-            <div fxLayout="column">
-              <p>{{element.title}}</p>
-              <p>{{element.channelTitle}}</p>
-              <p>Date Added: {{element.publishedDate | date}}</p>
-            </div>
-          </mat-card>
-        </a>
-        <div *ngIf="playlist.videos.length-1 == i">
-          yo
+          <button *ngIf="playlist != undefined" mat-raised-button type="button" color="primary" (click)="RefreshPlaylist()">Refresh</button>
         </div>
-      </td>
-    </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </mat-table>
-  <mat-paginator [length]="100"
-                 [pageSize]="10"
-                 [pageSizeOptions]="[5, 10, 25, 100]"
-                 aria-label="Select page">
-  </mat-paginator>
+        <!-- Display curated playlists -->
+        <app-playlists-view (selectedPlaylist)="PlaylistSelected($event)"></app-playlists-view>
 
+      </form>
+
+      <!-- Selected Playlist details-->
+      <mat-card class="listitemvideo" *ngIf="playlist != null">
+        <div fxLayout="row">
+          <div fxFlex="92">
+            <div>
+              {{playlist.playlistTitle}}
+            </div>
+            <div>
+              Playlist Owner: {{playlist.channelOwner}}
+            </div>
+            <div *ngIf="videosToDisplay != undefined">
+              Results: {{videosToDisplay.length}}
+            </div>
+          </div>
+
+
+          <div fxFlex="5">
+            <button mat-mini-fab color="accent" aria-label="de-select play list">
+              <mat-icon>share</mat-icon>
+            </button>
+          </div>
+
+          <div fxFlex="3">
+            <button mat-mini-fab color="accent" aria-label="de-select play list" (click)="DeselectPlaylist()">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </div>
+
+        </div>
+      </mat-card>
+
+      <!-- Search Bar -->
+      <form *ngIf="playlist != undefined" [formGroup]="resultSearchForm" (ngSubmit)="ResultsSearch()">
+        <div>
+          <mat-form-field class="long-input">
+            <mat-label>Search</mat-label>
+            <input formControlName="searchInput" matInput placeholder="Video Title or Channel Name">
+          </mat-form-field>
+
+          <button mat-raised-button type="submit" color="primary" style="margin-right: 1%;">Submit</button>
+
+          <button mat-raised-button type="button" color="primary" style="margin-right: 1%;" (click)="ClearSearchString()">Clear</button>
+        </div>
+      </form>
+
+      <div *ngIf="playlist != undefined" class="video-results">
+        <mat-table [dataSource]="videosToDisplay" class="mat-elevation-z8">
+
+          <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+          <!-- Position Column -->
+          <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef> No. </th>
+            <td mat-cell *matCellDef="let i = index"> {{i+1}} </td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="result">
+            <th mat-header-cell *matHeaderCellDef> Result </th>
+            <td mat-cell *matCellDef="let element; let i = index">
+
+              <mat-card class="listitemvideo" fxLayout="row" (click)="selectVideo(element.videoID)">
+                <div fxFlex="95">
+                  <a fxLayout="row" style=" color: white; text-decoration: none;" href="{{'https://www.youtube.com/watch?v=' + element.videoID}}" target="_blank">
+                    <img src="{{element.thumbnail}}" style="max-width:50%; margin-right:1%; border-radius:25px;" alt="thumbnail">
+                    <div>
+                      <p>{{element.title}}</p>
+                      <p>{{element.channelTitle}}</p>
+                      <p>Date Added: {{element.publishedDate | date}}</p>
+                    </div>
+                  </a>
+                </div>
+
+                <div fxFlex="5">
+                  <button mat-mini-fab color="accent" aria-label="de-select play list" (click)="CreateSharedPost('video', element.id)">
+                    <mat-icon>share</mat-icon>
+                  </button>
+                </div>
+              </mat-card>
+
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </mat-table>
+        <mat-paginator [length]="100"
+                       [pageSize]="10"
+                       [pageSizeOptions]="[5, 10, 25, 100]"
+                       aria-label="Select page">
+        </mat-paginator>
+
+      </div>
+    </div>
+  </div>
 </div>
 
 

@@ -17,6 +17,8 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
         {
             entity.ToTable("sharedposts");
 
+            entity.HasIndex(e => e.UserId, "FK_SharedPost_User_ID_idx");
+
             entity.HasIndex(e => e.Id, "ID_UNIQUE")
                 .IsUnique();
 
@@ -38,7 +40,17 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
                 .HasMaxLength(300)
                 .HasColumnName("thumbnail");
 
+            entity.Property(e => e.Type)
+                .HasMaxLength(45)
+                .HasColumnName("type");
+
             entity.Property(e => e.UserId).HasColumnName("userID");
+
+            entity.HasOne(d => d.User)
+                .WithMany(p => p.Sharedposts)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SharedPost_User_ID");
 
             OnConfigurePartial(entity);
         }

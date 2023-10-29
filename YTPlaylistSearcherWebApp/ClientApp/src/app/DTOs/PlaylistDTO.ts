@@ -1,5 +1,6 @@
 
 export interface PlaylistDTO {
+  id: number,
   playlistID: string;
   playlistTitle: string;
   channelOwner: string;
@@ -7,6 +8,7 @@ export interface PlaylistDTO {
 }
 
 export interface VideoDTO {
+  id: number,
   videoID: string;
   title: string;
   channelTitle: string;

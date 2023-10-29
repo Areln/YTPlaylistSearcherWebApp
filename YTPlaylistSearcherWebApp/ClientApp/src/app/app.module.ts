@@ -40,7 +40,7 @@ export function tokenGetter() {
     LoginComponent,
     SharedPostsFeedComponent,
     MyProfileComponent,
-    MyPostsComponent
+    MyPostsComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -57,7 +57,8 @@ export function tokenGetter() {
       { path: 'search/:id', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'search', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: '', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
-      { path: 'cs/lineups', component: CounterStrikeLineUpsSearchComponent, canActivate: [AuthGuard] }
+      { path: 'cs/lineups', component: CounterStrikeLineUpsSearchComponent, canActivate: [AuthGuard] },
+      { path: 'shared', component: SharedPostsFeedComponent }
       //{ path: 'counter', component: CounterComponent },
       //{ path: 'fetch-data', component: FetchDataComponent },
 

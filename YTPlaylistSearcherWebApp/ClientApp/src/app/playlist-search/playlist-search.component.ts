@@ -145,4 +145,16 @@ export class PlaylistSearchComponent {
     this.videosToDisplay = [];
     this.loadPlaylistForm.controls.playlistLink.patchValue('');
   }
+
+  public CreateSharedPost(type: string, id: number) {
+    this._playlistService.CreateSharedPost({ type: type, contentID: id}).subscribe(result => {
+      console.log('new post ID: ' + result);
+    });
+  }
+
+  public PlaylistSelected(playlistID: string) {
+    console.log(playlistID);
+    this.loadPlaylistForm.controls.playlistLink.patchValue(playlistID);
+    this.PlaylistSubmit();
+  }
 }
