@@ -33,7 +33,6 @@ export class AuthGuard implements CanActivate {
 
     try {
       const refreshRes = await new Promise<AuthenticatedResponse>((resolve, reject) => {
-        //this.http.post<AuthenticatedResponse>(this.baseUrl + "token/refresh", credentials, {
         this.http.post<AuthenticatedResponse>(this.baseUrl + "token/refresh", { accessToken: token, refreshToken: refreshToken }, {
           headers: new HttpHeaders({
             "Content-Type": "application/json"
