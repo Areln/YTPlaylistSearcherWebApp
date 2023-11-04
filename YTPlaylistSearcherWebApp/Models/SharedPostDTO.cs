@@ -2,11 +2,11 @@
 {
     public class SharedPostDTO
     {
-        public string UserName { get; set; }
-        public string Content { get; set; }
-        public string Thumbnail { get; set; }
-        public string Link { get; set; }
-        public string Type { get; set; }
-        public string SharedDate { get; set; }
+        public string userName { get; set; }
+        public string content { get; set; }
+        public string thumbnail { get; set; }
+        public string link { get; set; }
+        public string type { get; set; }
+        public string sharedDate { get; set; }
     }
 }

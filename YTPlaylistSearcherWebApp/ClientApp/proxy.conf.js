@@ -12,7 +12,8 @@ const PROXY_CONFIG = [
       "/environment",
       "/login",
       "/debug",
-      "/token"
+      "/token",
+      "/posts"
    ],
     target: target,
     secure: false,

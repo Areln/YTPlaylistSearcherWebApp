@@ -38,9 +38,11 @@ export class AuthGuard implements CanActivate {
             "Content-Type": "application/json"
           })
         }).subscribe({
-          next: (res: AuthenticatedResponse) => resolve(res),
+          next: (res: AuthenticatedResponse) => {
+
+            resolve(res);
+          },
           error: (_) => {
-            reject;
             isRefreshSuccess = false;
             console.log(_);
           }

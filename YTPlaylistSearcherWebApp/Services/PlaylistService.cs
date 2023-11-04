@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
 using System.Linq;
 using YTPlaylistSearcherWebApp.Data;
 using YTPlaylistSearcherWebApp.Data.CS;
@@ -7,6 +9,7 @@ using YTPlaylistSearcherWebApp.DTOs;
 using YTPlaylistSearcherWebApp.Mappers;
 using YTPlaylistSearcherWebApp.Models;
 using YTPlaylistSearcherWebApp.Repositories;
+using static YTPlaylistSearcherWebApp.Services.ShareFeedHub;
 
 namespace YTPlaylistSearcherWebApp.Services
 {
@@ -134,7 +137,7 @@ namespace YTPlaylistSearcherWebApp.Services
             return PlaylistMapper.MapToDTO(result);
         }
 
-        public async Task<int> CreateSharedPost(YTPSContext context, CreateSharedPostModel sharedPostModel)
+        public async Task<int> CreateSharedPost(YTPSContext context, CreateSharedPostModel sharedPostModel, IHubContext<ShareFeedHub> _shareFeedHub)
         {
             var newPost = new Sharedpost
             {
@@ -148,7 +151,8 @@ namespace YTPlaylistSearcherWebApp.Services
 
             await _playlistRepository.AddSharedPost(context, newPost);
             await context.SaveChangesAsync();
-
+            await _shareFeedHub.Clients.All.SendAsync(WebSocketActions.NEW_POST, JsonConvert.SerializeObject(PlaylistMapper.MapToDTO(newPost)));
+            
             return newPost.Id;
         }
     }
@@ -162,6 +166,6 @@ namespace YTPlaylistSearcherWebApp.Services
         Task<PlaylistDTO> RefreshPlaylist(YTPSContext context, string playlistID);
         Task<IEnumerable<PlaylistDTO>> GetPlaylists(YTPSContext _context);
         Task<IEnumerable<SharedPostDTO>> GetSharedPosts(YTPSContext _context);
-        Task<int> CreateSharedPost(YTPSContext context, CreateSharedPostModel sharedPostModel);
+        Task<int> CreateSharedPost(YTPSContext context, CreateSharedPostModel sharedPostModel, IHubContext<ShareFeedHub> _shareFeedHub);
     }
 }

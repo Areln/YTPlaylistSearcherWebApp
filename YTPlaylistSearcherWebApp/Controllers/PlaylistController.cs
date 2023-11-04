@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 using YTPlaylistSearcherWebApp.Data;
 using YTPlaylistSearcherWebApp.DTOs;
@@ -17,12 +17,14 @@ namespace YTPlaylistSearcherWebApp.Controllers
         private readonly ILogger<PlaylistController> _logger;
         private readonly YTPSContext _context;
         private readonly IPlaylistService _playlistService;
+        private readonly IHubContext<ShareFeedHub> _shareFeedHub;
 
-        public PlaylistController(ILogger<PlaylistController> logger, YTPSContext context, IPlaylistService playlistService)
+        public PlaylistController(ILogger<PlaylistController> logger, YTPSContext context, IPlaylistService playlistService, IHubContext<ShareFeedHub> shareFeedHub)
         {
             _logger = logger;
             _playlistService = playlistService;
             _context = context;
+            _shareFeedHub = shareFeedHub;
         }
 
         [HttpGet("GetPlaylistFromYT"), Authorize(Roles = "Admin, Trusted, Standard, Guest")]
@@ -115,7 +117,7 @@ namespace YTPlaylistSearcherWebApp.Controllers
             try
             {
                 sharedPostModel.UserName = User.FindFirst(ClaimTypes.Name).Value;
-                var postID = await _playlistService.CreateSharedPost(_context, sharedPostModel);
+                var postID = await _playlistService.CreateSharedPost(_context, sharedPostModel, _shareFeedHub);
                 return Ok(postID);
             }
             catch (Exception e)

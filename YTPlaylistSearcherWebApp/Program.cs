@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using YTPlaylistSearcherWebApp.Data;
@@ -30,6 +30,17 @@ builder.Services.AddAuthentication(opt => {
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder => builder
+        .WithOrigins("http://localhost:44422", "https://localhost:44422", "https://localhost:7298")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
+});
+
+builder.Services.AddSignalR();
+
 builder.Services.AddControllers();
 
 builder.Services.AddHttpClient();
@@ -58,6 +69,9 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("CorsPolicy");
+
+app.MapHub<ShareFeedHub>("/posts");
 
 app.MapControllerRoute(
     name: "default",

@@ -56,13 +56,26 @@ namespace YTPlaylistSearcherWebApp.Mappers
         {
             return list.Select(x => new SharedPostDTO
             {
-                UserName = x.User.UserName,
-                Content = x.Content,
-                Link = x.Link,
-                SharedDate = x.CreatedDate.ToString(),
-                Thumbnail = x.Thumbnail,
-                Type = x.Type,
+                userName = x.User.UserName,
+                content = x.Content,
+                link = x.Link,
+                sharedDate = x.CreatedDate.ToString(),
+                thumbnail = x.Thumbnail,
+                type = x.Type,
             });
+        }
+
+        public static SharedPostDTO MapToDTO(Sharedpost post)
+        {
+            return new SharedPostDTO
+            {
+                userName = post.User.UserName,
+                content = post.Content,
+                link = post.Link,
+                sharedDate = post.CreatedDate.ToString(),
+                thumbnail = post.Thumbnail,
+                type = post.Type,
+            };
         }
 
         // DTO TO DB MODELS
