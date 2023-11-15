@@ -25,6 +25,7 @@ namespace YTPlaylistSearcherWebApp.Services
         {
             public static readonly string NEW_POST = "NewPost";
             public static readonly string TEST = "Test";
+            public static readonly string DELETE_POST = "DeletePost";
         }
     }
 

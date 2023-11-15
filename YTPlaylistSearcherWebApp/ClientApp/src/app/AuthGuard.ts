@@ -32,7 +32,7 @@ export class AuthGuard implements CanActivate {
     let isRefreshSuccess: boolean;
 
     try {
-      const refreshRes = await new Promise<AuthenticatedResponse>((resolve, reject) => {
+      const refreshRes = await new Promise<AuthenticatedResponse | null>((resolve, reject) => {
         this.http.post<AuthenticatedResponse>(this.baseUrl + "token/refresh", { accessToken: token, refreshToken: refreshToken }, {
           headers: new HttpHeaders({
             "Content-Type": "application/json"
@@ -45,14 +45,18 @@ export class AuthGuard implements CanActivate {
           error: (_) => {
             isRefreshSuccess = false;
             console.log(_);
+            resolve(null);
           }
         });
       });
 
-      localStorage.setItem("jwt", refreshRes.token);
-      localStorage.setItem("refreshToken", refreshRes.refreshToken);
-      isRefreshSuccess = true;
-
+      if (refreshRes != null) {
+        localStorage.setItem("jwt", refreshRes.token);
+        localStorage.setItem("refreshToken", refreshRes.refreshToken);
+        isRefreshSuccess = true;
+      } else {
+        isRefreshSuccess = false;
+      }
     } catch (e) {
       isRefreshSuccess = false;
     }

@@ -14,11 +14,13 @@ export class PlaylistsViewComponent {
   errorMessage: string | null | undefined;
   playlists!: PlaylistDTO[];
   @Output() selectedPlaylist = new EventEmitter<string>();
+  @Output() sharedPlaylists = new EventEmitter<PlaylistDTO>();
 
   constructor(private _playlistService: PlaylistService, private router: Router, @Inject('BASE_URL') private baseUrl: string) {
     this.isLoading = true;
 
     _playlistService.GetPlaylists().subscribe(result => {
+      console.log(result);
       this.isLoading = false;
       this.playlists = result;
     }, error => {
@@ -29,7 +31,10 @@ export class PlaylistsViewComponent {
 
   playlistClick(playlistID: string) {
     this.selectedPlaylist.emit(playlistID);
-    //this.router.navigate(['/search/' + playlistID]);
+  }
+
+  sharePlaylist(playlist: PlaylistDTO) {
+    this.sharedPlaylists.emit(playlist);
   }
 
 }

@@ -37,8 +37,12 @@ public class TokenController : ControllerBase
 
             var userAuth = _context.Users.Include(x => x.AuthenticationNavigation).Where(x => x.UserName == username).Select(x => x.AuthenticationNavigation).FirstOrDefault();
 
-            if (userAuth is null || userAuth.RefreshToken != refreshToken || userAuth.RefreshDate <= DateTime.Now)
+            if (userAuth is null)
                 return BadRequest("Invalid client request");
+            if (userAuth.RefreshToken != refreshToken)
+                return BadRequest("refresh tokens do not match");
+            if (userAuth.RefreshDate <= DateTime.Now)
+                return BadRequest("refresh time");
 
             var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims);
             var newRefreshToken = _tokenService.GenerateRefreshToken();

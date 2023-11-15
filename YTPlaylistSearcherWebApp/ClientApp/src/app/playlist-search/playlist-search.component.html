@@ -2,7 +2,7 @@
 <div fxLayout="row">
 
   <div fxFlex="25" style="padding: 3%">
-    <app-shared-posts-feed></app-shared-posts-feed>
+    <app-shared-posts-feed style="position: fixed; width: 20%"></app-shared-posts-feed>
   </div>
 
   <div fxFlex="50">
@@ -27,7 +27,7 @@
         </div>
 
         <!-- Display curated playlists -->
-        <app-playlists-view (selectedPlaylist)="PlaylistSelected($event)"></app-playlists-view>
+        <app-playlists-view (selectedPlaylist)="PlaylistSelected($event)" (sharedPlaylists)="SharePlaylist($event)"></app-playlists-view>
 
       </form>
 
@@ -48,7 +48,7 @@
 
 
           <div fxFlex="5">
-            <button mat-mini-fab color="accent" aria-label="de-select play list">
+            <button mat-mini-fab color="accent" aria-label="de-select play list" (click)="SharePlaylist2()">
               <mat-icon>share</mat-icon>
             </button>
           </div>

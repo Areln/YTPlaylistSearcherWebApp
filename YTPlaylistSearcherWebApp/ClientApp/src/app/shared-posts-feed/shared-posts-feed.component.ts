@@ -1,9 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
+import { DateAdapter } from '@angular/material/core';
 import { MatTable } from '@angular/material/table';
 import * as signalR from '@microsoft/signalr';
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { SharedPostDTO } from '../DTOs/SharedPostDTO';
 import { PlaylistService } from '../services/PlaylistService';
+import { SignalrService } from '../services/signalr.service';
 
 @Component({
   selector: 'app-shared-posts-feed',
@@ -22,7 +24,7 @@ export class SharedPostsFeedComponent {
 
   // infinite scroll
   //https://stackoverflow.com/questions/57142883/how-can-i-use-infinite-scroll-in-combination-with-mat-table-and-service-in-angul
-  constructor(private _playlistService: PlaylistService) {
+  constructor(private _playlistService: PlaylistService, private _postHub: SignalrService) {
     this.isLoading = true;
     this._playlistService.GetSharedPosts().subscribe(result => {
       this.sharedPosts = result;
@@ -32,23 +34,28 @@ export class SharedPostsFeedComponent {
       this.isLoading = false;
     });
 
-    this.connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:7298/posts")
-      .configureLogging(LogLevel.Debug)
-      .build();
-
-    this.connection.start().catch((reason) => {
-      console.log(reason);
+    _postHub.newMessageEvent.subscribe(data => {
+      console.log('New Message Event:' + data);
     });
 
-    this.connection.on("ReceiveMessage", (data: string) => {
-      console.log(data);
-    });
-
-    this.connection.on("NewPost", (post: string) => {
-      var temp = JSON.parse(post);
-      this.sharedPosts.unshift(temp);
+    _postHub.newPost.subscribe(post => {
+      this.sharedPosts.unshift(post);
       this.table.renderRows();
+    });
+
+    _postHub.deletePost.subscribe(id => {
+      this.sharedPosts = this.sharedPosts.filter(x => x.postID != id)
+      this.table.renderRows();
+    });
+
+  }
+
+  DeletePost(post: SharedPostDTO) {
+    this._playlistService.DeletePost(post.postID).subscribe(result => {
+      if (result == true) {
+        this.sharedPosts = this.sharedPosts.filter(x => x.postID != post.postID)
+        this.table.renderRows();
+      }
     });
   }
 }

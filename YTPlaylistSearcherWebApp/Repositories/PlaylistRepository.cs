@@ -148,6 +148,11 @@ namespace YTPlaylistSearcherWebApp.Repositories
         {
             await context.Sharedposts.AddAsync(newPost);
         }
+
+        public async Task<Sharedpost> GetPost(YTPSContext context, int id) 
+        {
+            return await context.Sharedposts.Include(x => x.User).FirstOrDefaultAsync(context => context.Id == id);
+        }
     }
 
     public interface IPlaylistRepository
@@ -162,5 +167,6 @@ namespace YTPlaylistSearcherWebApp.Repositories
         Task<IEnumerable<Playlist>> GetPlaylists(YTPSContext _context);
         Task<IEnumerable<Sharedpost>> GetSharedPosts(YTPSContext context);
         Task AddSharedPost(YTPSContext context, Sharedpost newPost);
+        Task<Sharedpost> GetPost(YTPSContext context, int id);
     }
 }

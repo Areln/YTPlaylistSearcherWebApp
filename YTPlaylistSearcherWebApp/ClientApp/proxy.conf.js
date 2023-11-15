@@ -12,14 +12,21 @@ const PROXY_CONFIG = [
       "/environment",
       "/login",
       "/debug",
-      "/token",
-      "/posts"
+      "/token"
    ],
     target: target,
     secure: false,
     headers: {
       Connection: 'Keep-Alive'
     }
+  },
+  {
+    context: [
+      "/posts"
+    ],
+    target: target,
+    secure: false,
+    ws: true
   }
 ]
 

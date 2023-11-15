@@ -101,7 +101,8 @@ namespace YTPlaylistSearcherWebApp.Controllers
         {
             try
             {
-                var playlistDto = await _playlistService.GetSharedPosts(_context);
+                var username = User.Identity.Name;
+                var playlistDto = await _playlistService.GetSharedPosts(_context, username);
                 return Ok(playlistDto);
             }
             catch (Exception e)
@@ -119,6 +120,22 @@ namespace YTPlaylistSearcherWebApp.Controllers
                 sharedPostModel.UserName = User.FindFirst(ClaimTypes.Name).Value;
                 var postID = await _playlistService.CreateSharedPost(_context, sharedPostModel, _shareFeedHub);
                 return Ok(postID);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "GetSharedPosts");
+                return BadRequest(e.Message + " " + e.InnerException);
+            }
+        }
+
+        [HttpPost("DeletePost"), Authorize(Roles = "Admin, Trusted, Standard")]
+        public async Task<IActionResult> DeletePost([FromBody] int id)
+        {
+            try
+            {
+                var username = User.Identity.Name;
+                var wasDeleted = await _playlistService.DeletePost(_context, _shareFeedHub, id, username);
+                return Ok(wasDeleted);
             }
             catch (Exception e)
             {

@@ -33,10 +33,9 @@ builder.Services.AddAuthentication(opt => {
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder => builder
-        .WithOrigins("http://localhost:44422", "https://localhost:44422", "https://localhost:7298")
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowCredentials());
+        .WithOrigins("http://localhost:44422", "https://localhost:44422", "http://localhost:7298", "https://localhost:7298").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+        .WithOrigins("https://ytplaylistsearcherwebapp.azurewebsites.net").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+);
 });
 
 builder.Services.AddSignalR();

@@ -1,5 +1,4 @@
-﻿using System.Net.NetworkInformation;
-using YTPlaylistSearcherWebApp.DTOs;
+﻿using YTPlaylistSearcherWebApp.DTOs;
 using YTPlaylistSearcherWebApp.Models;
 
 namespace YTPlaylistSearcherWebApp.Mappers
@@ -56,12 +55,14 @@ namespace YTPlaylistSearcherWebApp.Mappers
         {
             return list.Select(x => new SharedPostDTO
             {
+                postID = x.Id,
                 userName = x.User.UserName,
                 content = x.Content,
                 link = x.Link,
                 sharedDate = x.CreatedDate.ToString(),
                 thumbnail = x.Thumbnail,
                 type = x.Type,
+                isOwned = false
             });
         }
 
@@ -69,12 +70,14 @@ namespace YTPlaylistSearcherWebApp.Mappers
         {
             return new SharedPostDTO
             {
+                postID = post.Id,
                 userName = post.User.UserName,
                 content = post.Content,
                 link = post.Link,
                 sharedDate = post.CreatedDate.ToString(),
                 thumbnail = post.Thumbnail,
                 type = post.Type,
+                isOwned = false
             };
         }
 

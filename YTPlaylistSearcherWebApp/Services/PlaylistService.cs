@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using System.Linq;
 using YTPlaylistSearcherWebApp.Data;
@@ -131,20 +130,39 @@ namespace YTPlaylistSearcherWebApp.Services
             return PlaylistMapper.MapToDTO(result);
         }
 
-        public async Task<IEnumerable<SharedPostDTO>> GetSharedPosts(YTPSContext _context)
+        public async Task<IEnumerable<SharedPostDTO>> GetSharedPosts(YTPSContext _context, string username)
         {
             var result = await _playlistRepository.GetSharedPosts(_context);
-            return PlaylistMapper.MapToDTO(result);
+            
+            var dto = PlaylistMapper.MapToDTO(result).ToList();
+            
+            foreach (var item in dto)
+            {
+                if (item.userName == username)
+                {
+                    item.isOwned = true;
+                }
+            }
+
+            return dto;
         }
 
         public async Task<int> CreateSharedPost(YTPSContext context, CreateSharedPostModel sharedPostModel, IHubContext<ShareFeedHub> _shareFeedHub)
         {
+            string thumbnails = string.Empty;
+
+            if (sharedPostModel.Type == "playlist")
+            {
+                var _thumbnails = await GetPlaylistThumbnails(context, sharedPostModel.ContentID);
+                thumbnails = string.Join(',', _thumbnails);
+            }
+
             var newPost = new Sharedpost
             {
                 User = context.Users.Where(x => x.UserName == sharedPostModel.UserName).FirstOrDefault(),
                 Content = sharedPostModel.Type == "video" ? context.Videos.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().Title : context.Playlists.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().PlaylistTitle,
                 CreatedDate = DateTime.Now,
-                Thumbnail = sharedPostModel.Type == "video" ? context.Videos.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().Thumbnail : string.Empty,
+                Thumbnail = sharedPostModel.Type == "video" ? context.Videos.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().Thumbnail : thumbnails,
                 Link = sharedPostModel.Type == "video" ? context.Videos.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().VideoId : context.Playlists.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().PlaylistId,
                 Type = sharedPostModel.Type,
             };
@@ -154,6 +172,29 @@ namespace YTPlaylistSearcherWebApp.Services
             await _shareFeedHub.Clients.All.SendAsync(WebSocketActions.NEW_POST, JsonConvert.SerializeObject(PlaylistMapper.MapToDTO(newPost)));
             
             return newPost.Id;
+        }
+
+        public async Task<IEnumerable<string>> GetPlaylistThumbnails(YTPSContext context, int playlistID)
+        {
+            var temp = context.Playlists.Include(x => x.Videos).Where(x => x.Id == playlistID).FirstOrDefault().Videos.Take(6).Select(x => x.Thumbnail).AsEnumerable();
+            return temp;
+        }
+
+        public async Task<bool> DeletePost(YTPSContext context, IHubContext<ShareFeedHub> _shareFeedHub, int id, string username)
+        {
+            var post = await _playlistRepository.GetPost(context, id);
+
+            if (post.User.UserName == username)
+            {
+                context.Sharedposts.Remove(post);
+                await context.SaveChangesAsync();
+
+                await _shareFeedHub.Clients.All.SendAsync(WebSocketActions.DELETE_POST, id);
+
+                return true;
+            }
+
+            return false;
         }
     }
 
@@ -165,7 +206,8 @@ namespace YTPlaylistSearcherWebApp.Services
         Task<PlaylistDTO> GetPlaylistSorted(YTPSContext context, string playlistID, SearchChipBagDTO bag);
         Task<PlaylistDTO> RefreshPlaylist(YTPSContext context, string playlistID);
         Task<IEnumerable<PlaylistDTO>> GetPlaylists(YTPSContext _context);
-        Task<IEnumerable<SharedPostDTO>> GetSharedPosts(YTPSContext _context);
+        Task<IEnumerable<SharedPostDTO>> GetSharedPosts(YTPSContext _context, string username);
         Task<int> CreateSharedPost(YTPSContext context, CreateSharedPostModel sharedPostModel, IHubContext<ShareFeedHub> _shareFeedHub);
+        Task<bool> DeletePost(YTPSContext context, IHubContext<ShareFeedHub> _shareFeedHub, int id, string username);
     }
 }

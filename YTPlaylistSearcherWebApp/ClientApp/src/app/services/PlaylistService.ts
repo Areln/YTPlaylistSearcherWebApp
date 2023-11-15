@@ -32,14 +32,18 @@ export class PlaylistService {
   }
 
   GetPlaylists() {
-    return this.http.get<PlaylistDTO[]>(this.baseUrl + 'playlist/GetPlaylists')
+    return this.http.get<PlaylistDTO[]>(this.baseUrl + 'playlist/GetPlaylists');
   }
 
   GetSharedPosts() {
-    return this.http.get<SharedPostDTO[]>(this.baseUrl + 'playlist/GetSharedPosts')
+    return this.http.get<SharedPostDTO[]>(this.baseUrl + 'playlist/GetSharedPosts');
   }
 
   CreateSharedPost(post: any) {
-    return this.http.post<number>(this.baseUrl + 'playlist/CreateSharedPost', post)
+    return this.http.post<number>(this.baseUrl + 'playlist/CreateSharedPost', post);
+  }
+
+  DeletePost(id: number) {
+    return this.http.post<boolean>(this.baseUrl + 'playlist/DeletePost', id);
   }
 }

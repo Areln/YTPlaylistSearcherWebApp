@@ -4,7 +4,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PlaylistDTO, VideoDTO } from '../DTOs/PlaylistDTO';
 import { ActivatedRoute } from '@angular/router'
 import { PlaylistService } from '../services/PlaylistService';
-import { DataSource } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-playlist-search',
@@ -145,6 +144,16 @@ export class PlaylistSearchComponent {
     this._playlistService.CreateSharedPost({ type: type, contentID: id}).subscribe(result => {
       console.log('new post ID: ' + result);
     });
+  }
+
+  public SharePlaylist(playlist: PlaylistDTO) {
+    this.CreateSharedPost("playlist", playlist.id);
+  }
+
+  public SharePlaylist2() {
+    if (this.playlist != null) {
+      this.CreateSharedPost("playlist", this.playlist?.id);
+    }
   }
 
   public PlaylistSelected(playlistID: string) {
