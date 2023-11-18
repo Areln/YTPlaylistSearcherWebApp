@@ -21,6 +21,7 @@ import { AuthGuard } from './AuthGuard';
 import { SharedPostsFeedComponent } from './shared-posts-feed/shared-posts-feed.component';
 import { MyProfileComponent } from './my-profile/my-profile.component';
 import { MyPostsComponent } from './my-profile/my-posts/my-posts.component';
+import { SuikaCloneComponent } from './suika-clone/suika-clone.component';
 
 export function tokenGetter() {
   return localStorage.getItem("jwt");
@@ -41,6 +42,7 @@ export function tokenGetter() {
     SharedPostsFeedComponent,
     MyProfileComponent,
     MyPostsComponent,
+    SuikaCloneComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -58,7 +60,8 @@ export function tokenGetter() {
       { path: 'search', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: '', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'cs/lineups', component: CounterStrikeLineUpsSearchComponent, canActivate: [AuthGuard] },
-      { path: 'shared', component: SharedPostsFeedComponent }
+      { path: 'shared', component: SharedPostsFeedComponent },
+      { path: 'suika', component: SuikaCloneComponent }
       //{ path: 'counter', component: CounterComponent },
       //{ path: 'fetch-data', component: FetchDataComponent },
 
