@@ -29,6 +29,20 @@ namespace YTPlaylistSearcherWebApp.Mappers
                 })
             };
         }
+        public static VideoDTO MapToDTO(Video video)
+        {
+            return new VideoDTO
+            {
+                ID = video.Id,
+                VideoID = video.VideoId,
+                Title = video.Title,
+                Description = video.Description,
+                ChannelTitle = video.ChannelTitle,
+                PublishedDate = video.PublishedDate,
+                Thumbnail = video.Thumbnail,
+                Playlists = new List<PlaylistDTO>()
+            };
+        }
 
         public static IEnumerable<PlaylistDTO> MapToDTO(IEnumerable<Playlist> list)
         {
@@ -63,6 +77,21 @@ namespace YTPlaylistSearcherWebApp.Mappers
                 thumbnail = x.Thumbnail,
                 type = x.Type,
                 isOwned = false
+            });
+        }
+
+        public static IEnumerable<VideoDTO> MapToDTO(IEnumerable<Video> videos)
+        {
+            return videos.Select(y => new VideoDTO
+            {
+                ID = y.Id,
+                VideoID = y.VideoId,
+                Title = y.Title,
+                Description = y.Description,
+                ChannelTitle = y.ChannelTitle,
+                PublishedDate = y.PublishedDate,
+                Thumbnail = y.Thumbnail,
+                Playlists = new List<PlaylistDTO>()
             });
         }
 
@@ -101,13 +130,13 @@ namespace YTPlaylistSearcherWebApp.Mappers
             };
         }
 
-        // TY TO DTO
+        // YT TO DTO
         public static PlaylistDetailsDTO MapToDTO(YTGetPlaylistDetailsResponse response)
         {
             return new PlaylistDetailsDTO
             {
                 Title = response.items.First().snippet.title,
-                Thumbnail = response.items.First().snippet.thumbnails.medium?.url,
+                Thumbnail = response.items.First().snippet.thumbnails.high.url,
                 ChannelTitle = response.items.First().snippet.channelTitle,
                 PlaylistID = response.items.First().id
             };

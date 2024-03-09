@@ -22,6 +22,7 @@ import { SharedPostsFeedComponent } from './shared-posts-feed/shared-posts-feed.
 import { MyProfileComponent } from './my-profile/my-profile.component';
 import { MyPostsComponent } from './my-profile/my-posts/my-posts.component';
 import { SuikaCloneComponent } from './suika-clone/suika-clone.component';
+import { DiscoverSearchComponent } from './discover-search/discover-search.component';
 
 export function tokenGetter() {
   return localStorage.getItem("jwt");
@@ -43,6 +44,7 @@ export function tokenGetter() {
     MyProfileComponent,
     MyPostsComponent,
     SuikaCloneComponent,
+    DiscoverSearchComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -61,7 +63,7 @@ export function tokenGetter() {
       { path: '', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'cs/lineups', component: CounterStrikeLineUpsSearchComponent, canActivate: [AuthGuard] },
       { path: 'shared', component: SharedPostsFeedComponent },
-      { path: 'suika', component: SuikaCloneComponent }
+      { path: 'discover', component: DiscoverSearchComponent, canActivate: [AuthGuard] }
       //{ path: 'counter', component: CounterComponent },
       //{ path: 'fetch-data', component: FetchDataComponent },
 

@@ -9,5 +9,6 @@
         public string Description { get; set; }
         public string Thumbnail { get; set; }
         public DateTime? PublishedDate { get; set; }
+        public List<PlaylistDTO> Playlists { get; set; }
     }
 }

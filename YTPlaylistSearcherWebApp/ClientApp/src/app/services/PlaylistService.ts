@@ -1,7 +1,8 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
-import { PlaylistDTO } from "../DTOs/PlaylistDTO";
+import { AdvancedSearchRequestDTO } from "../discover-search/discover-search.component";
+import { PlaylistDTO, VideoDTO } from "../DTOs/PlaylistDTO";
 import { SharedPostDTO } from "../DTOs/SharedPostDTO";
 import { AuthenticatedResponse } from "../login/login.component";
 
@@ -45,5 +46,9 @@ export class PlaylistService {
 
   DeletePost(id: number) {
     return this.http.post<boolean>(this.baseUrl + 'playlist/DeletePost', id);
+  }
+
+  SearchVideos(search: AdvancedSearchRequestDTO) {
+    return this.http.post<any>(this.baseUrl + 'playlist/SearchVideos', search);
   }
 }

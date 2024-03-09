@@ -15,4 +15,5 @@ export interface VideoDTO {
   description: string;
   thumbnail: string;
   publishedDate: string | null;
+  playlists: PlaylistDTO[];
 }

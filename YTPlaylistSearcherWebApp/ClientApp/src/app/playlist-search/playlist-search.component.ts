@@ -140,6 +140,7 @@ export class PlaylistSearchComponent {
     this.loadPlaylistForm.controls.playlistLink.patchValue('');
   }
 
+  // TODO: Create Share component
   public CreateSharedPost(type: string, id: number) {
     this._playlistService.CreateSharedPost({ type: type, contentID: id}).subscribe(result => {
       console.log('new post ID: ' + result);

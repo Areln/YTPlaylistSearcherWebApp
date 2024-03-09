@@ -153,6 +153,16 @@ namespace YTPlaylistSearcherWebApp.Repositories
         {
             return await context.Sharedposts.Include(x => x.User).FirstOrDefaultAsync(context => context.Id == id);
         }
+
+        public async Task<IEnumerable<Video>> SearchVideos(YTPSContext context, AdvancedSearchRequestDTO searchRequest)
+        {
+            return await context.Videos.Where(x =>
+                x.Title.ToLower().Contains(searchRequest.SearchPhrase.ToLower()) ||
+                x.ChannelTitle.ToLower().Contains(searchRequest.SearchPhrase.ToLower())
+                )
+                .Include(x => x.Playlist)
+                .ToListAsync();
+        }
     }
 
     public interface IPlaylistRepository
@@ -168,5 +178,6 @@ namespace YTPlaylistSearcherWebApp.Repositories
         Task<IEnumerable<Sharedpost>> GetSharedPosts(YTPSContext context);
         Task AddSharedPost(YTPSContext context, Sharedpost newPost);
         Task<Sharedpost> GetPost(YTPSContext context, int id);
+        Task<IEnumerable<Video>> SearchVideos(YTPSContext context, AdvancedSearchRequestDTO searchRequest);
     }
 }

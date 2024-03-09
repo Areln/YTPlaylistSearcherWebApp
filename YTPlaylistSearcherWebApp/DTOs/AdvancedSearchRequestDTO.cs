@@ -1,9 +1,15 @@
 ﻿namespace YTPlaylistSearcherWebApp.DTOs
 {
+    public class AdvancedSearchRequestDTO
+    {
+        public string SearchPhrase { get; set; }
+        public bool OrderByDesc { get; set; }
+        public IEnumerable<SearchChipDTO> SearchChips { get; set; }
+    }
+
     public class SearchChipBagDTO
     {
         public List<SearchChipDTO> Chips { get; set; }
-        public bool OrderByDesc { get; set; }
     }
 
     public class SearchChipDTO

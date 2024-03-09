@@ -133,9 +133,9 @@ namespace YTPlaylistSearcherWebApp.Services
         public async Task<IEnumerable<SharedPostDTO>> GetSharedPosts(YTPSContext _context, string username)
         {
             var result = await _playlistRepository.GetSharedPosts(_context);
-            
+
             var dto = PlaylistMapper.MapToDTO(result).ToList();
-            
+
             foreach (var item in dto)
             {
                 if (item.userName == username)
@@ -170,7 +170,7 @@ namespace YTPlaylistSearcherWebApp.Services
             await _playlistRepository.AddSharedPost(context, newPost);
             await context.SaveChangesAsync();
             await _shareFeedHub.Clients.All.SendAsync(WebSocketActions.NEW_POST, JsonConvert.SerializeObject(PlaylistMapper.MapToDTO(newPost)));
-            
+
             return newPost.Id;
         }
 
@@ -196,6 +196,37 @@ namespace YTPlaylistSearcherWebApp.Services
 
             return false;
         }
+
+        public async Task<IEnumerable<VideoDTO>> SearchVideos(YTPSContext context, AdvancedSearchRequestDTO searchRequest)
+        {
+            var searchResults = await _playlistRepository.SearchVideos(context, searchRequest);
+            //var dtos = PlaylistMapper.MapToDTO(searchResults).ToList();
+            VideoDTO duplicateVideo = null;
+            List<VideoDTO> returnList = new List<VideoDTO>();
+
+            foreach (var result in searchResults)
+            {
+                duplicateVideo = returnList.FirstOrDefault(x => x.VideoID == result.VideoId);
+                if (duplicateVideo == null)
+                {
+                    var newAdd = PlaylistMapper.MapToDTO(result);
+                    newAdd.Playlists.Add(PlaylistMapper.MapToDTO(result.Playlist));
+                    returnList.Add(newAdd);
+                }
+                else
+                {
+                    if (duplicateVideo.Playlists.Where(x => x.PlaylistID == result.Playlist.PlaylistId).Any() == false)
+                    {
+                        var index = returnList.IndexOf(duplicateVideo);
+                        var mod = returnList[index];
+                        mod.Playlists.Add(PlaylistMapper.MapToDTO(result.Playlist));
+                        returnList[index] = mod;
+                    }
+                }
+            }
+
+            return returnList.Take(100);
+        }
     }
 
     public interface IPlaylistService
@@ -209,5 +240,6 @@ namespace YTPlaylistSearcherWebApp.Services
         Task<IEnumerable<SharedPostDTO>> GetSharedPosts(YTPSContext _context, string username);
         Task<int> CreateSharedPost(YTPSContext context, CreateSharedPostModel sharedPostModel, IHubContext<ShareFeedHub> _shareFeedHub);
         Task<bool> DeletePost(YTPSContext context, IHubContext<ShareFeedHub> _shareFeedHub, int id, string username);
+        Task<IEnumerable<VideoDTO>> SearchVideos(YTPSContext context, AdvancedSearchRequestDTO searchRequest);
     }
 }

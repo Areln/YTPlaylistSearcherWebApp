@@ -143,5 +143,20 @@ namespace YTPlaylistSearcherWebApp.Controllers
                 return BadRequest(e.Message + " " + e.InnerException);
             }
         }
+
+        [HttpPost("SearchVideos")]
+        public async Task<IActionResult> SearchVideos([FromBody] AdvancedSearchRequestDTO searchRequest)
+        {
+            try
+            {
+                var searchResults = await _playlistService.SearchVideos(_context, searchRequest);
+                return Ok(searchResults);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "SearchVideos");
+                return BadRequest(e.Message + " " + e.InnerException);
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 @NgModule({
   imports: [
@@ -45,7 +46,8 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatTableModule,
     MatExpansionModule,
     MatPaginatorModule,
-    MatTabsModule
+    MatTabsModule,
+    MatGridListModule
   ]
 })
 export class SharedModule { }
