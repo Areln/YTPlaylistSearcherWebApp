@@ -14,6 +14,7 @@ namespace YTPlaylistSearcherWebApp.Models
         public string? Thumbnail { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string? Type { get; set; }
+        public int? GuestAppropriate { get; set; }
 
         public virtual User User { get; set; } = null!;
     }

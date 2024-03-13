@@ -21,6 +21,7 @@ namespace YTPlaylistSearcherWebApp.Models
         public DateTime UpdatedDate { get; set; }
 
         public virtual ICollection<Playlistsearchhistory> Playlistsearchhistories { get; set; }
+
         public virtual ICollection<Video> Videos { get; set; }
     }
 }

@@ -32,6 +32,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "playlistvideos",
+         "ObjectType": 0
+      },
+      {
          "Name": "policies",
          "ObjectType": 0
       },

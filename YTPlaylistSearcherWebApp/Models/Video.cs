@@ -7,6 +7,11 @@ namespace YTPlaylistSearcherWebApp.Models
 {
     public partial class Video
     {
+        public Video()
+        {
+            Playlists = new HashSet<Playlist>();
+        }
+
         public int Id { get; set; }
         public string VideoId { get; set; } = null!;
         public string? Title { get; set; }
@@ -14,8 +19,7 @@ namespace YTPlaylistSearcherWebApp.Models
         public string? Description { get; set; }
         public string? Thumbnail { get; set; }
         public DateTime? PublishedDate { get; set; }
-        public int? PlaylistId { get; set; }
 
-        public virtual Playlist? Playlist { get; set; }
+        public virtual ICollection<Playlist> Playlists { get; set; }
     }
 }

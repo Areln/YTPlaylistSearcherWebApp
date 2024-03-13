@@ -160,7 +160,7 @@ namespace YTPlaylistSearcherWebApp.Repositories
                 x.Title.ToLower().Contains(searchRequest.SearchPhrase.ToLower()) ||
                 x.ChannelTitle.ToLower().Contains(searchRequest.SearchPhrase.ToLower())
                 )
-                .Include(x => x.Playlist)
+                .Include(x => x.Playlists)
                 .ToListAsync();
         }
     }

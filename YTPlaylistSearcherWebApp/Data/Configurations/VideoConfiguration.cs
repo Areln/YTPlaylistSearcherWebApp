@@ -17,8 +17,6 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
         {
             entity.ToTable("videos");
 
-            entity.HasIndex(e => e.PlaylistId, "FK_VIDEOS_PLAYLISTS_idx");
-
             entity.HasIndex(e => e.Id, "ID_UNIQUE")
                 .IsUnique();
 
@@ -32,8 +30,6 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
                 .HasMaxLength(400)
                 .HasColumnName("description");
 
-            entity.Property(e => e.PlaylistId).HasColumnName("playlistID");
-
             entity.Property(e => e.PublishedDate).HasColumnType("datetime");
 
             entity.Property(e => e.Thumbnail)
@@ -45,11 +41,6 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
             entity.Property(e => e.VideoId)
                 .HasMaxLength(100)
                 .HasColumnName("videoID");
-
-            entity.HasOne(d => d.Playlist)
-                .WithMany(p => p.Videos)
-                .HasForeignKey(d => d.PlaylistId)
-                .HasConstraintName("FK_Videos_Playlists");
 
             OnConfigurePartial(entity);
         }

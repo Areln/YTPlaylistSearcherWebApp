@@ -31,34 +31,48 @@ namespace YTPlaylistSearcherWebApp.Services
                 PlaylistTitle = detailsResult.Title,
                 PlaylistID = playlistID,
                 ChannelOwner = detailsResult.ChannelTitle,
-                Videos = listResult.items.Where(x => x.snippet.title.ToLower() != "private video" && x.snippet.title.ToLower() != "deleted video").Select(x => new VideoDTO
-                {
-                    VideoID = x.contentDetails.videoId,
-                    Title = x.snippet.title,
-                    ChannelTitle = x.snippet.videoOwnerChannelTitle,
-                    //Description = x.snippet.description,
-                    Thumbnail = x.snippet.thumbnails?.high?.url,
-                    PublishedDate = x.snippet.publishedAt
-                }),
+                Videos = listResult.items.Where(x => x.snippet.title.ToLower() != "private video"
+                                                  && x.snippet.title.ToLower() != "deleted video")
+                                                  .Select(x => new VideoDTO
+                                                  {
+                                                      VideoID = x.contentDetails.videoId,
+                                                      Title = x.snippet.title,
+                                                      ChannelTitle = x.snippet.videoOwnerChannelTitle,
+                                                      //Description = x.snippet.description,
+                                                      Thumbnail = x.snippet.thumbnails?.high?.url,
+                                                      PublishedDate = x.snippet.publishedAt
+                                                  }),
             };
         }
 
         public async Task<PlaylistDTO> GetPlaylist(YTPSContext context, string playlistID)
         {
+            // Check if the playlist id exists in the DB
             var dbPlaylist = await _playlistRepository.GetPlaylist(context, playlistID);
             var returnPlaylist = new PlaylistDTO();
 
+            // If no result
             if (dbPlaylist == null)
             {
+                // Get the playlist from youtube (PlaylistDTO)
                 returnPlaylist = await GetPlaylistFromYT(playlistID);
+                // DTO to models. I dont remember if there is a reason for mapping YT models to DTOs first,
+                // may want to change it to be YT models -> DB models or it doesnt matter
                 dbPlaylist = PlaylistMapper.MapToModel(returnPlaylist);
+
+                // we want to re-use existing video records so check for them here\
+                var existingVideos = context.Videos.Where(x => dbPlaylist.Videos.Select(x => x.VideoId).Contains(x.VideoId)).AsEnumerable();
+                existingVideos = dbPlaylist.Videos.Where(x => existingVideos.Select(x => x.VideoId).Contains(x.VideoId) == false).ToList();
+                dbPlaylist.Videos = existingVideos.ToList();
+
+                // Add playlist to DB
                 await _playlistRepository.AddPlaylist(context, dbPlaylist);
                 await context.SaveChangesAsync();
             }
-            else
+            else // else check if we should refresh the playlist or just map to DTO and return.
             {
                 // TODO: Make Playlist Refresh Rate a setting we get from the DB
-                if (dbPlaylist.UpdatedDate.AddMinutes(15) < DateTime.UtcNow)
+                if (dbPlaylist.UpdatedDate.AddMinutes(1) < DateTime.UtcNow)
                 {
                     returnPlaylist = await RefreshPlaylist(context, playlistID);
                 }
@@ -111,10 +125,23 @@ namespace YTPlaylistSearcherWebApp.Services
                     .Any() == false)
                 .ToList();
 
-            // Update DB
-            await _playlistRepository.DeleteVideos(context, vidsToRemove);
-            dbPlaylist.Videos = dbPlaylist.Videos.Concat(newVids).ToList();
+            // we want to re-use existing video records so check for them here
+            var existingVideos = context.Videos.Where(x => newVids.Select(x => x.VideoId).Contains(x.VideoId)).AsEnumerable();
+            foreach (var v in existingVideos) 
+            {
+                dbPlaylist.Videos.Add(v);
+            }
 
+            dbPlaylist.Videos = dbPlaylist.Videos.Concat(newVids.Where(x =>
+                dbPlaylist.Videos.Select(x => x.VideoId).Contains(x.VideoId) == false)
+                ).ToList();
+
+            foreach (var item in vidsToRemove)
+            {
+                dbPlaylist.Videos.Remove(item);
+            }
+
+            // TODO: update needs to re-use existing video ids
             await _playlistRepository.UpdatePlaylist(context, dbPlaylist);
             await context.SaveChangesAsync();
 
@@ -204,26 +231,26 @@ namespace YTPlaylistSearcherWebApp.Services
             VideoDTO duplicateVideo = null;
             List<VideoDTO> returnList = new List<VideoDTO>();
 
-            foreach (var result in searchResults)
-            {
-                duplicateVideo = returnList.FirstOrDefault(x => x.VideoID == result.VideoId);
-                if (duplicateVideo == null)
-                {
-                    var newAdd = PlaylistMapper.MapToDTO(result);
-                    newAdd.Playlists.Add(PlaylistMapper.MapToDTO(result.Playlist));
-                    returnList.Add(newAdd);
-                }
-                else
-                {
-                    if (duplicateVideo.Playlists.Where(x => x.PlaylistID == result.Playlist.PlaylistId).Any() == false)
-                    {
-                        var index = returnList.IndexOf(duplicateVideo);
-                        var mod = returnList[index];
-                        mod.Playlists.Add(PlaylistMapper.MapToDTO(result.Playlist));
-                        returnList[index] = mod;
-                    }
-                }
-            }
+            //foreach (var result in searchResults)
+            //{
+            //    duplicateVideo = returnList.FirstOrDefault(x => x.VideoID == result.VideoId);
+            //    if (duplicateVideo == null)
+            //    {
+            //        var newAdd = PlaylistMapper.MapToDTO(result);
+            //        newAdd.Playlists.Add(PlaylistMapper.MapToDTO(result.Playlist));
+            //        returnList.Add(newAdd);
+            //    }
+            //    else
+            //    {
+            //        if (duplicateVideo.Playlists.Where(x => x.PlaylistID == result.Playlist.PlaylistId).Any() == false)
+            //        {
+            //            var index = returnList.IndexOf(duplicateVideo);
+            //            var mod = returnList[index];
+            //            mod.Playlists.Add(PlaylistMapper.MapToDTO(result.Playlist));
+            //            returnList[index] = mod;
+            //        }
+            //    }
+            //}
 
             return returnList.Take(100);
         }

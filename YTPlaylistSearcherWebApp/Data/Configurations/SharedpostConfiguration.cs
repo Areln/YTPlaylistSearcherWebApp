@@ -32,6 +32,10 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
                 .HasColumnType("datetime")
                 .HasColumnName("createdDate");
 
+            entity.Property(e => e.GuestAppropriate)
+                .HasColumnName("guestAppropriate")
+                .HasDefaultValueSql("'0'");
+
             entity.Property(e => e.Link)
                 .HasMaxLength(300)
                 .HasColumnName("link");
