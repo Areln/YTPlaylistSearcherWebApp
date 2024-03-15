@@ -14,11 +14,13 @@ namespace YTPlaylistSearcherWebApp.Services
 {
     public class PlaylistService : IPlaylistService
     {
+        private readonly IConfiguration _configuration;
         private readonly IPlaylistRepository _playlistRepository;
 
-        public PlaylistService(IPlaylistRepository playlistRepository)
+        public PlaylistService(IPlaylistRepository playlistRepository, IConfiguration configuration)
         {
             _playlistRepository = playlistRepository;
+            _configuration = configuration;
         }
 
         public async Task<PlaylistDTO> GetPlaylistFromYT(string playlistID)
@@ -76,7 +78,8 @@ namespace YTPlaylistSearcherWebApp.Services
             else // else check if we should refresh the playlist or just map to DTO and return.
             {
                 // TODO: Make Playlist Refresh Rate a setting we get from the DB
-                if (dbPlaylist.UpdatedDate.AddMinutes(1) < DateTime.UtcNow)
+                var timeToRefreshInMinutes = _configuration.GetValue<int>("PlaylistRefreshTimeInMinutes");
+                if (dbPlaylist.UpdatedDate.AddMinutes(timeToRefreshInMinutes) < DateTime.UtcNow)
                 {
                     returnPlaylist = await RefreshPlaylist(context, playlistID);
                 }
