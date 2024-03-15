@@ -14,6 +14,7 @@ export interface VideoDTO {
   channelTitle: string;
   description: string;
   thumbnail: string;
-  publishedDate: string | null;
+  addedToPlaylistDate: string | null;
+  VideoPublishedDate: string | null;
   playlists: PlaylistDTO[];
 }

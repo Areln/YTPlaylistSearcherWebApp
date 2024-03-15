@@ -17,15 +17,15 @@ namespace YTPlaylistSearcherWebApp.Mappers
                 PlaylistID = playlistModel.PlaylistId,
                 PlaylistTitle = playlistModel.PlaylistTitle,
                 ChannelOwner = playlistModel.ChannelTitle,
-                Videos = playlistModel.Videos.Select(x => new VideoDTO
+                Videos = playlistModel.Playlistvideos.Select(x => new VideoDTO
                 {
-                    ID = x.Id,
-                    VideoID = x.VideoId,
-                    Title = x.Title,
-                    Description = x.Description,
-                    ChannelTitle = x.ChannelTitle,
-                    PublishedDate = x.PublishedDate,
-                    Thumbnail = x.Thumbnail
+                    ID = x.Video.Id,
+                    VideoID = x.Video.VideoId,
+                    Title = x.Video.Title,
+                    Description = x.Video.Description,
+                    ChannelTitle = x.Video.ChannelTitle,
+                    AddedToPlaylistDate = x.AddedDate,
+                    Thumbnail = x.Video.Thumbnail
                 })
             };
         }
@@ -38,7 +38,7 @@ namespace YTPlaylistSearcherWebApp.Mappers
                 Title = video.Title,
                 Description = video.Description,
                 ChannelTitle = video.ChannelTitle,
-                PublishedDate = video.PublishedDate,
+                //PublishedDate = video.PublishedDate,
                 Thumbnail = video.Thumbnail,
                 Playlists = new List<PlaylistDTO>()
             };
@@ -52,15 +52,15 @@ namespace YTPlaylistSearcherWebApp.Mappers
                 PlaylistID = x.PlaylistId,
                 PlaylistTitle = x.PlaylistTitle,
                 ChannelOwner = x.ChannelTitle,
-                Videos = x.Videos.Select(y => new VideoDTO
+                Videos = x.Playlistvideos.Select(y => new VideoDTO
                 {
-                    ID = y.Id,
-                    VideoID = y.VideoId,
-                    Title = y.Title,
-                    Description = y.Description,
-                    ChannelTitle = y.ChannelTitle,
-                    PublishedDate = y.PublishedDate,
-                    Thumbnail = y.Thumbnail
+                    ID = y.Video.Id,
+                    VideoID = y.Video.VideoId,
+                    Title = y.Video.Title,
+                    Description = y.Video.Description,
+                    ChannelTitle = y.Video.ChannelTitle,
+                    AddedToPlaylistDate = y.Video.PublishedDate,
+                    Thumbnail = y.Video.Thumbnail
                 })
             });
         }
@@ -89,7 +89,7 @@ namespace YTPlaylistSearcherWebApp.Mappers
                 Title = y.Title,
                 Description = y.Description,
                 ChannelTitle = y.ChannelTitle,
-                PublishedDate = y.PublishedDate,
+                //AddedToPlaylistDate = y.PublishedDate,
                 Thumbnail = y.Thumbnail,
                 Playlists = new List<PlaylistDTO>()
             });
@@ -118,14 +118,20 @@ namespace YTPlaylistSearcherWebApp.Mappers
                 PlaylistId = playlistDTO.PlaylistID,
                 PlaylistTitle = playlistDTO.PlaylistTitle,
                 ChannelTitle = playlistDTO.ChannelOwner,
-                Videos = playlistDTO.Videos.Select(x => new Video
+                Playlistvideos = playlistDTO.Videos.Select(x => new Playlistvideo 
                 {
-                    VideoId = x.VideoID,
-                    Title = x.Title,
-                    Description = x.Description,
-                    ChannelTitle = x.ChannelTitle,
-                    PublishedDate = x.PublishedDate,
-                    Thumbnail = x.Thumbnail
+                    Video = new Video 
+                    {
+                        VideoId = x.VideoID,
+                        Title = x.Title,
+                        Description = x.Description,
+                        ChannelTitle = x.ChannelTitle,
+                        //PublishedDate = x.PublishedDate, 
+                        // This is commented out because the publish date is actually the
+                        // date it was added to the playlist and we only need to know that on a PlaylistVideo record
+                        Thumbnail = x.Thumbnail
+                    },
+                    AddedDate = x.AddedToPlaylistDate
                 }).ToList(),
             };
         }

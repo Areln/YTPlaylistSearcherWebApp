@@ -42,25 +42,6 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
                 .HasColumnType("datetime")
                 .HasColumnName("updatedDate");
 
-            entity.HasMany(d => d.Videos)
-                .WithMany(p => p.Playlists)
-                .UsingEntity<Dictionary<string, object>>(
-                    "Playlistvideo",
-                    l => l.HasOne<Video>().WithMany().HasForeignKey("VideoId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("playlistvideos_video"),
-                    r => r.HasOne<Playlist>().WithMany().HasForeignKey("PlaylistId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("playlistvideos_playlist"),
-                    j =>
-                    {
-                        j.HasKey("PlaylistId", "VideoId").HasName("PRIMARY").HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
-
-                        j.ToTable("playlistvideos");
-
-                        j.HasIndex(new[] { "VideoId" }, "playlistvideos_video_idx");
-
-                        j.IndexerProperty<int>("PlaylistId").HasColumnName("playlistID");
-
-                        j.IndexerProperty<int>("VideoId").HasColumnName("videoID");
-                    });
-
             OnConfigurePartial(entity);
         }
 

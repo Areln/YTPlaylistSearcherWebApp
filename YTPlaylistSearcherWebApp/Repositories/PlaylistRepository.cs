@@ -86,7 +86,8 @@ namespace YTPlaylistSearcherWebApp.Repositories
                 var baseQ = context.Playlists
                     .Where(x => x.PlaylistId == playlistID);
 
-                baseQ = baseQ.Include(x => x.Videos);
+                baseQ = baseQ.Include(x => x.Playlistvideos)
+                                .ThenInclude(x => x.Video);
 
                 if (playlistQuery != null)
                 {
@@ -156,11 +157,15 @@ namespace YTPlaylistSearcherWebApp.Repositories
 
         public async Task<IEnumerable<Video>> SearchVideos(YTPSContext context, AdvancedSearchRequestDTO searchRequest)
         {
+            // This query searches the videos table where the title of the video or the channel title who uploaded the video
+            // contains our search input. We include the playlist videos so we can display which playlists the song already belongs to in the DB.
+
             return await context.Videos.Where(x =>
                 x.Title.ToLower().Contains(searchRequest.SearchPhrase.ToLower()) ||
                 x.ChannelTitle.ToLower().Contains(searchRequest.SearchPhrase.ToLower())
                 )
-                .Include(x => x.Playlists)
+                .Include(x => x.Playlistvideos)
+                .ThenInclude(x => x.Playlist)
                 .ToListAsync();
         }
     }

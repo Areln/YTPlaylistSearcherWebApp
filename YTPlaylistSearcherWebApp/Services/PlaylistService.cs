@@ -40,7 +40,7 @@ namespace YTPlaylistSearcherWebApp.Services
                                                       ChannelTitle = x.snippet.videoOwnerChannelTitle,
                                                       //Description = x.snippet.description,
                                                       Thumbnail = x.snippet.thumbnails?.high?.url,
-                                                      PublishedDate = x.snippet.publishedAt
+                                                      AddedToPlaylistDate = x.snippet.publishedAt
                                                   }),
             };
         }
@@ -60,10 +60,14 @@ namespace YTPlaylistSearcherWebApp.Services
                 // may want to change it to be YT models -> DB models or it doesnt matter
                 dbPlaylist = PlaylistMapper.MapToModel(returnPlaylist);
 
-                // we want to re-use existing video records so check for them here\
-                var existingVideos = context.Videos.Where(x => dbPlaylist.Videos.Select(x => x.VideoId).Contains(x.VideoId)).AsEnumerable();
-                existingVideos = dbPlaylist.Videos.Where(x => existingVideos.Select(x => x.VideoId).Contains(x.VideoId) == false).ToList();
-                dbPlaylist.Videos = existingVideos.ToList();
+                // we want to re-use existing video records so check for them here
+                for (int i = 0; i < dbPlaylist.Playlistvideos.Count; i++)
+                {
+                    var existingVideo = await context.Videos.FirstOrDefaultAsync(x => x.VideoId == dbPlaylist.Playlistvideos.ToList()[i].Video.VideoId);
+
+                    if (existingVideo != null)
+                        dbPlaylist.Playlistvideos.ToList()[i].Video.Id = existingVideo.Id;
+                }
 
                 // Add playlist to DB
                 await _playlistRepository.AddPlaylist(context, dbPlaylist);
@@ -89,7 +93,7 @@ namespace YTPlaylistSearcherWebApp.Services
         {
             var dbPlaylist = await GetPlaylist(context, playlistID);
             var sorted = dbPlaylist.Videos;
-            dbPlaylist.Videos = sorted.OrderByDescending(x => x.PublishedDate);
+            dbPlaylist.Videos = sorted.OrderByDescending(x => x.AddedToPlaylistDate);
             return dbPlaylist;
         }
 
@@ -113,32 +117,33 @@ namespace YTPlaylistSearcherWebApp.Services
             var ytPlaylist = await GetPlaylistFromYT(playlistID);
             var ytModelPlaylist = PlaylistMapper.MapToModel(ytPlaylist);
 
-            var vidsToRemove = dbPlaylist.Videos
-                .Where(x => ytModelPlaylist.Videos
-                    .Where(z => z.VideoId == x.VideoId)
+            var vidsToRemove = dbPlaylist.Playlistvideos
+                .Where(x => ytModelPlaylist.Playlistvideos
+                    .Where(z => z.Video.VideoId == x.Video.VideoId)
                     .Any() == false)
                 .ToList();
 
-            var newVids = ytModelPlaylist.Videos
-                .Where(x => dbPlaylist.Videos
-                    .Where(z => z.VideoId == x.VideoId)
+            var newVids = ytModelPlaylist.Playlistvideos
+                .Where(x => dbPlaylist.Playlistvideos
+                    .Where(z => z.Video.VideoId == x.Video.VideoId)
                     .Any() == false)
                 .ToList();
 
             // we want to re-use existing video records so check for them here
-            var existingVideos = context.Videos.Where(x => newVids.Select(x => x.VideoId).Contains(x.VideoId)).AsEnumerable();
-            foreach (var v in existingVideos) 
+            for (var i = 0; i < newVids.Count; i++)
             {
-                dbPlaylist.Videos.Add(v);
+                var existingVideoID = await context.Videos.FirstOrDefaultAsync(x => x.VideoId == newVids[i].Video.VideoId);
+
+                if (existingVideoID != null)
+                    newVids[i].Video = existingVideoID;
             }
 
-            dbPlaylist.Videos = dbPlaylist.Videos.Concat(newVids.Where(x =>
-                dbPlaylist.Videos.Select(x => x.VideoId).Contains(x.VideoId) == false)
-                ).ToList();
+            // set db playlist videos = db playlist videos where vids to remove does not contain
+            dbPlaylist.Playlistvideos = dbPlaylist.Playlistvideos.Where(x => vidsToRemove.Contains(x) == false).ToList();
 
-            foreach (var item in vidsToRemove)
+            foreach (var v in newVids)
             {
-                dbPlaylist.Videos.Remove(item);
+                dbPlaylist.Playlistvideos.Add(v);
             }
 
             // TODO: update needs to re-use existing video ids
@@ -187,10 +192,10 @@ namespace YTPlaylistSearcherWebApp.Services
             var newPost = new Sharedpost
             {
                 User = context.Users.Where(x => x.UserName == sharedPostModel.UserName).FirstOrDefault(),
-                Content = sharedPostModel.Type == "video" ? context.Videos.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().Title : context.Playlists.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().PlaylistTitle,
+                Content = sharedPostModel.Type == "video" ? context.Playlistvideos.Select(x => x.Video).Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().Title : context.Playlists.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().PlaylistTitle,
                 CreatedDate = DateTime.Now,
-                Thumbnail = sharedPostModel.Type == "video" ? context.Videos.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().Thumbnail : thumbnails,
-                Link = sharedPostModel.Type == "video" ? context.Videos.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().VideoId : context.Playlists.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().PlaylistId,
+                Thumbnail = sharedPostModel.Type == "video" ? context.Playlistvideos.Select(x => x.Video).Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().Thumbnail : thumbnails,
+                Link = sharedPostModel.Type == "video" ? context.Playlistvideos.Select(x => x.Video).Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().VideoId : context.Playlists.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().PlaylistId,
                 Type = sharedPostModel.Type,
             };
 
@@ -203,7 +208,10 @@ namespace YTPlaylistSearcherWebApp.Services
 
         public async Task<IEnumerable<string>> GetPlaylistThumbnails(YTPSContext context, int playlistID)
         {
-            var temp = context.Playlists.Include(x => x.Videos).Where(x => x.Id == playlistID).FirstOrDefault().Videos.Take(6).Select(x => x.Thumbnail).AsEnumerable();
+            var temp = context.Playlists.Include(x => x.Playlistvideos)
+                                            .ThenInclude(x => x.Video)
+                                                .Where(x => x.Id == playlistID)
+                                                .FirstOrDefault().Playlistvideos.Take(6).Select(x => x.Video.Thumbnail).AsEnumerable();
             return temp;
         }
 
@@ -231,26 +239,7 @@ namespace YTPlaylistSearcherWebApp.Services
             VideoDTO duplicateVideo = null;
             List<VideoDTO> returnList = new List<VideoDTO>();
 
-            //foreach (var result in searchResults)
-            //{
-            //    duplicateVideo = returnList.FirstOrDefault(x => x.VideoID == result.VideoId);
-            //    if (duplicateVideo == null)
-            //    {
-            //        var newAdd = PlaylistMapper.MapToDTO(result);
-            //        newAdd.Playlists.Add(PlaylistMapper.MapToDTO(result.Playlist));
-            //        returnList.Add(newAdd);
-            //    }
-            //    else
-            //    {
-            //        if (duplicateVideo.Playlists.Where(x => x.PlaylistID == result.Playlist.PlaylistId).Any() == false)
-            //        {
-            //            var index = returnList.IndexOf(duplicateVideo);
-            //            var mod = returnList[index];
-            //            mod.Playlists.Add(PlaylistMapper.MapToDTO(result.Playlist));
-            //            returnList[index] = mod;
-            //        }
-            //    }
-            //}
+
 
             return returnList.Take(100);
         }

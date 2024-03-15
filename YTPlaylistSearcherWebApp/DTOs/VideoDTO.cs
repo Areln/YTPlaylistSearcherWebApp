@@ -8,7 +8,8 @@
         public string ChannelTitle { get; set; }
         public string Description { get; set; }
         public string Thumbnail { get; set; }
-        public DateTime? PublishedDate { get; set; }
+        public DateTime? AddedToPlaylistDate { get; set; }
+        public DateTime? VideoPublishedDate { get; set; }
         public List<PlaylistDTO> Playlists { get; set; }
     }
 }

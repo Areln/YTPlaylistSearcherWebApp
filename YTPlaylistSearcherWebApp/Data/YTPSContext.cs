@@ -24,6 +24,7 @@ namespace YTPlaylistSearcherWebApp.Data
         public virtual DbSet<Follower> Followers { get; set; } = null!;
         public virtual DbSet<Playlist> Playlists { get; set; } = null!;
         public virtual DbSet<Playlistsearchhistory> Playlistsearchhistories { get; set; } = null!;
+        public virtual DbSet<Playlistvideo> Playlistvideos { get; set; } = null!;
         public virtual DbSet<Policy> Policies { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Rolepolicy> Rolepolicies { get; set; } = null!;
@@ -41,6 +42,7 @@ namespace YTPlaylistSearcherWebApp.Data
             modelBuilder.ApplyConfiguration(new Configurations.FollowerConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.PlaylistConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.PlaylistsearchhistoryConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.PlaylistvideoConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.PolicyConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.RoleConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.RolepolicyConfiguration());

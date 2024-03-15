@@ -10,7 +10,7 @@ namespace YTPlaylistSearcherWebApp.Models
         public Playlist()
         {
             Playlistsearchhistories = new HashSet<Playlistsearchhistory>();
-            Videos = new HashSet<Video>();
+            Playlistvideos = new HashSet<Playlistvideo>();
         }
 
         public int Id { get; set; }
@@ -21,7 +21,6 @@ namespace YTPlaylistSearcherWebApp.Models
         public DateTime UpdatedDate { get; set; }
 
         public virtual ICollection<Playlistsearchhistory> Playlistsearchhistories { get; set; }
-
-        public virtual ICollection<Video> Videos { get; set; }
+        public virtual ICollection<Playlistvideo> Playlistvideos { get; set; }
     }
 }
