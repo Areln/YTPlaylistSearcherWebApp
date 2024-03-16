@@ -1,34 +1,19 @@
-<div fxLayout="row">
 
-  <form [formGroup]="searchForm" (ngSubmit)="GetResults()">
-    <div>
-      <mat-form-field class="long-input">
-        <mat-label>Search</mat-label>
-        <input formControlName="searchInput" matInput placeholder="Video Title or Channel Name">
-      </mat-form-field>
-
-      <button mat-raised-button type="submit" color="primary" style="margin-right: 1%;">Submit</button>
-
-      <!--<button mat-raised-button type="button" color="primary" style="margin-right: 1%;" >Clear</button>-->
-    </div>
-  </form>
-
-</div>
+<form [formGroup]="searchForm" (ngSubmit)="GetResults()">
+  <div fxLayout="row">
+    <div fxFlex="30"></div>
+    <mat-form-field class="long-input" fxFlex="20">
+      <mat-label>Search</mat-label>
+      <input formControlName="searchInput" matInput placeholder="Video Title or Channel Name">
+    </mat-form-field>
+    <div fxFlex="1"></div>
+    <button mat-raised-button type="submit" color="primary" style="align-self:center;">Submit</button>
+    <div fxFlex="1"></div>
+    <button mat-raised-button type="button" color="primary" style="align-self: center;">Clear</button>
+  </div>
+</form>
 
 
-
-<!--<mat-grid-list cols="5" rowHeight="2:1">
-  <mat-grid-tile *ngFor="let video of results; index as i" style="background-image: url('{{video.thumbnail}}') ">
-    <div fxLayout="column">
-      {{video.title}}
-      <div *ngIf="video != null">
-        <div *ngFor="let playlist of video.playlists; index as i">
-          {{playlist.playlistTitle}}
-        </div>
-      </div>
-    </div>
-  </mat-grid-tile>
-</mat-grid-list>-->
 
 
 <mat-grid-list cols="5" rowHeight="2:1">
@@ -36,29 +21,7 @@
     <mat-grid-tile-header>{{video.title}}</mat-grid-tile-header>
     <img mat-card-image src="{{video.thumbnail}}" style="width:100%;" alt="">
     <mat-grid-tile-footer>
-      <!--<mat-expansion-panel hideToggle>
-        <mat-expansion-panel-header>-->
-          <!--<mat-panel-title>
-            This is the expansion title
-          </mat-panel-title>
-          <mat-panel-description>
-            This is a summary of the content
-          </mat-panel-description>-->
-        <!--</mat-expansion-panel-header>
-        <div *ngIf="video != null">
-          <div *ngFor="let playlist of video.playlists; index as i">
-            {{playlist.playlistTitle}}
-          </div>
-        </div>
-      </mat-expansion-panel>-->
+      {{video.channelTitle}}
     </mat-grid-tile-footer>
-    <!--<mat-card fxFlex="100" >
-      <mat-card-header>
-        <mat-card-title>{{video.title}}</mat-card-title>
-        <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-      </mat-card-header>-->
-    <!--<mat-card-content>-->
-    <!--</mat-card-content>
-    </mat-card>-->
   </mat-grid-tile>
 </mat-grid-list>

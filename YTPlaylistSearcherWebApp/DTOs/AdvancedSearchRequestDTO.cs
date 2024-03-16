@@ -5,6 +5,8 @@
         public string SearchPhrase { get; set; }
         public bool OrderByDesc { get; set; }
         public IEnumerable<SearchChipDTO> SearchChips { get; set; }
+        public int Page { get; set; }
+        public int MaxResultCount { get; set; }
     }
 
     public class SearchChipBagDTO

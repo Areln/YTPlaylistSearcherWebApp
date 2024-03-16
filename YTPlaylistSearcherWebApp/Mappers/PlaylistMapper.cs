@@ -91,7 +91,13 @@ namespace YTPlaylistSearcherWebApp.Mappers
                 ChannelTitle = y.ChannelTitle,
                 //AddedToPlaylistDate = y.PublishedDate,
                 Thumbnail = y.Thumbnail,
-                Playlists = new List<PlaylistDTO>()
+                Playlists = y.Playlistvideos.Select(x => new PlaylistDTO
+                {
+                    ID = x.PlaylistId,
+                    PlaylistTitle = x.Playlist.PlaylistTitle,
+                    ChannelOwner = x.Playlist.ChannelTitle,
+                    PlaylistID = x.Playlist.PlaylistId
+                }).ToList()
             });
         }
 

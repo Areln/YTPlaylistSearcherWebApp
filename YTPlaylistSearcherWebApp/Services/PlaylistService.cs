@@ -82,7 +82,6 @@ namespace YTPlaylistSearcherWebApp.Services
             }
             else // else check if we should refresh the playlist or just map to DTO and return.
             {
-                // TODO: Make Playlist Refresh Rate a setting we get from the DB
                 var timeToRefreshInMinutes = _configuration.GetValue<int>("PlaylistRefreshTimeInMinutes");
                 if (dbPlaylist.UpdatedDate.AddMinutes(timeToRefreshInMinutes) < DateTime.UtcNow)
                 {
@@ -249,13 +248,8 @@ namespace YTPlaylistSearcherWebApp.Services
         public async Task<IEnumerable<VideoDTO>> SearchVideos(YTPSContext context, AdvancedSearchRequestDTO searchRequest)
         {
             var searchResults = await _playlistRepository.SearchVideos(context, searchRequest);
-            //var dtos = PlaylistMapper.MapToDTO(searchResults).ToList();
-            VideoDTO duplicateVideo = null;
-            List<VideoDTO> returnList = new List<VideoDTO>();
-
-
-
-            return returnList.Take(100);
+            var dtos = PlaylistMapper.MapToDTO(searchResults).ToList();
+            return dtos.Take(100);
         }
     }
 

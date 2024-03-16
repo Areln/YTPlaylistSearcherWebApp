@@ -25,6 +25,10 @@ export class DiscoverSearchComponent {
 
   }
 
+  private ngOnInit() {
+    this.GetResults();
+  }
+
   public GetResults() {
 
     var searchString = (String)(this.searchForm.controls['searchInput'].value).toLowerCase();
@@ -40,23 +44,6 @@ export class DiscoverSearchComponent {
           this.isLoading = false;
         });
     }
-
-
-    //if (this.playlist != null) {
-    //  this.videosToDisplay = this.playlist.videos.filter(x => {
-    //    if (x.channelTitle != undefined) {
-    //      if (x.channelTitle.toLowerCase().includes(searchString)) {
-    //        return true;
-    //      }
-    //    }
-    //    if (x.title != undefined) {
-    //      if (x.title.toLowerCase().includes(searchString)) {
-    //        return true;
-    //      }
-    //    }
-    //    return false;
-    //  });
-    //}
   }
 
 }
