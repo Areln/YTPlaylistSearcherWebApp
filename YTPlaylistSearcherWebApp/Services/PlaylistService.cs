@@ -63,9 +63,14 @@ namespace YTPlaylistSearcherWebApp.Services
                 dbPlaylist = PlaylistMapper.MapToModel(returnPlaylist);
 
                 // we want to re-use existing video records so check for them here
-                for (int i = 0; i < dbPlaylist.Playlistvideos.Count; i++)
+                // one big query instead of many 
+                var videoIDs = dbPlaylist.Playlistvideos.Select(x => x.Video.VideoId).ToList();
+
+                var existingVideos = await context.Videos.Where(x => videoIDs.Contains(x.VideoId)).ToListAsync();
+
+                for (int i = 0; i < dbPlaylist.Playlistvideos.Count(); i++)
                 {
-                    var existingVideo = await context.Videos.FirstOrDefaultAsync(x => x.VideoId == dbPlaylist.Playlistvideos.ToList()[i].Video.VideoId);
+                    var existingVideo = existingVideos.FirstOrDefault(x => x.VideoId == dbPlaylist.Playlistvideos.ToList()[i].Video.VideoId);
 
                     if (existingVideo != null)
                         dbPlaylist.Playlistvideos.ToList()[i].Video.Id = existingVideo.Id;
@@ -132,21 +137,27 @@ namespace YTPlaylistSearcherWebApp.Services
                     .Any() == false)
                 .ToList();
 
-            // we want to re-use existing video records so check for them here
-            for (var i = 0; i < newVids.Count; i++)
+            if (newVids.Count > 0)
             {
-                var existingVideoID = await context.Videos.FirstOrDefaultAsync(x => x.VideoId == newVids[i].Video.VideoId);
+                // we want to re-use existing video records so check for them here
+                var videoIDs = newVids.Select(x => x.Video.VideoId).ToList();
 
-                if (existingVideoID != null)
-                    newVids[i].Video = existingVideoID;
+                var existingVideos = await context.Videos.Where(x => videoIDs.Contains(x.VideoId)).ToListAsync();
+
+                foreach (var item in existingVideos)
+                {
+                    dbPlaylist.Playlistvideos.Add(new Playlistvideo 
+                    { 
+                        Video = item, 
+                        AddedDate = ytModelPlaylist.Playlistvideos.FirstOrDefault(x => x.Video.VideoId == item.VideoId).AddedDate 
+                    });
+                }
             }
 
-            // set db playlist videos = db playlist videos where vids to remove does not contain
-            dbPlaylist.Playlistvideos = dbPlaylist.Playlistvideos.Where(x => vidsToRemove.Contains(x) == false).ToList();
-
-            foreach (var v in newVids)
+            if (vidsToRemove.Count > 0)
             {
-                dbPlaylist.Playlistvideos.Add(v);
+                // set db playlist videos = db playlist videos where vids to remove does not contain
+                dbPlaylist.Playlistvideos = dbPlaylist.Playlistvideos.Where(x => vidsToRemove.Contains(x) == false).ToList();
             }
 
             // TODO: update needs to re-use existing video ids
