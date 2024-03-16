@@ -23,6 +23,8 @@ import { MyProfileComponent } from './my-profile/my-profile.component';
 import { MyPostsComponent } from './my-profile/my-posts/my-posts.component';
 import { SuikaCloneComponent } from './suika-clone/suika-clone.component';
 import { DiscoverSearchComponent } from './discover-search/discover-search.component';
+import { DiscoverSearchDetailsComponent } from './discover-search/discover-search-details/discover-search-details.component';
+import { SafePipe } from './safe.pipe';
 
 export function tokenGetter() {
   return localStorage.getItem("jwt");
@@ -45,6 +47,8 @@ export function tokenGetter() {
     MyPostsComponent,
     SuikaCloneComponent,
     DiscoverSearchComponent,
+    DiscoverSearchDetailsComponent,
+    SafePipe
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

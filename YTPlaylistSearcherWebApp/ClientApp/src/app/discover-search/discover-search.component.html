@@ -17,11 +17,12 @@
 
 
 <mat-grid-list cols="5" rowHeight="2:1">
-  <mat-grid-tile *ngFor="let video of results; index as i">
+  <mat-grid-tile *ngFor="let video of results; index as i" (click)="SelectVideo(video)">
     <mat-grid-tile-header>{{video.title}}</mat-grid-tile-header>
     <img mat-card-image src="{{video.thumbnail}}" style="width:100%;" alt="">
     <mat-grid-tile-footer>
       {{video.channelTitle}}
     </mat-grid-tile-footer>
+
   </mat-grid-tile>
 </mat-grid-list>

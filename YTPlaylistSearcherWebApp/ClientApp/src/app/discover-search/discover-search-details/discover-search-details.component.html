@@ -1,0 +1,26 @@
+
+
+<mat-card class="example-card">
+  <!--<mat-card-header>
+    <div mat-card-avatar class="example-header-image"></div>
+    <mat-card-title>{{data.title}}</mat-card-title>
+    <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+  </mat-card-header>-->
+  <iframe width="560" height="315" [src]="GetVideoID(data.videoID) | safe"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+  </iframe>
+
+
+  <mat-card-content>
+    <div *ngFor="let item of data.playlists">
+      {{item.playlistTitle}}
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button>LIKE</button>
+    <button mat-button>SHARE</button>
+  </mat-card-actions>
+</mat-card>

@@ -3,6 +3,15 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { VideoDTO } from '../DTOs/PlaylistDTO';
 import { PlaylistService } from '../services/PlaylistService';
+import {
+  MatDialog,
+  MatDialogRef,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogTitle,
+  MatDialogContent,
+} from '@angular/material/dialog';
+import { DiscoverSearchDetailsComponent } from './discover-search-details/discover-search-details.component';
 
 @Component({
   selector: 'app-discover-search',
@@ -21,7 +30,8 @@ export class DiscoverSearchComponent {
   constructor(
     private formBuilder: FormBuilder,
     private sanitizer: DomSanitizer,
-    private service: PlaylistService) {
+    private service: PlaylistService,
+    private dialog: MatDialog) {
 
   }
 
@@ -44,6 +54,16 @@ export class DiscoverSearchComponent {
           this.isLoading = false;
         });
     }
+  }
+
+  public SelectVideo(video: VideoDTO) {
+    console.log("click");
+    this.dialog.open(DiscoverSearchDetailsComponent,
+      {
+        data: video,
+        maxWidth: "100%",
+        disableClose: false
+      });
   }
 
 }
