@@ -143,13 +143,34 @@ namespace YTPlaylistSearcherWebApp.Services
 
                 var existingVideos = await context.Videos.Where(x => videoIDs.Contains(x.VideoId)).ToListAsync();
 
-                foreach (var item in existingVideos)
+                //foreach (var item in existingVideos)
+                //{
+                //    dbPlaylist.Playlistvideos.Add(new Playlistvideo 
+                //    { 
+                //        Video = item, 
+                //        AddedDate = ytModelPlaylist.Playlistvideos.FirstOrDefault(x => x.Video.VideoId == item.VideoId).AddedDate 
+                //    });
+                //}
+
+                foreach (var item in newVids)
                 {
-                    dbPlaylist.Playlistvideos.Add(new Playlistvideo 
-                    { 
-                        Video = item, 
-                        AddedDate = ytModelPlaylist.Playlistvideos.FirstOrDefault(x => x.Video.VideoId == item.VideoId).AddedDate 
-                    });
+                    var evid = existingVideos.FirstOrDefault(x => x.VideoId == item.Video.VideoId);
+                    if (evid != null)
+                    {
+                        dbPlaylist.Playlistvideos.Add(new Playlistvideo
+                        {
+                            Video = evid,
+                            AddedDate = item.AddedDate
+                        });
+                    }
+                    else
+                    {
+                        dbPlaylist.Playlistvideos.Add(new Playlistvideo
+                        {
+                            Video = item.Video,
+                            AddedDate = item.AddedDate
+                        });
+                    }
                 }
             }
 
