@@ -45,7 +45,6 @@ export class DiscoverSearchComponent {
 
     if (searchString != null) {
       this.service.SearchVideos({ SearchPhrase: searchString } as AdvancedSearchRequestDTO).subscribe(searchResults => {
-        console.log(searchResults);
         this.results = searchResults;
       },
         error => {
@@ -57,7 +56,6 @@ export class DiscoverSearchComponent {
   }
 
   public SelectVideo(video: VideoDTO) {
-    console.log("click");
     this.dialog.open(DiscoverSearchDetailsComponent,
       {
         data: video,
