@@ -73,7 +73,7 @@ namespace YTPlaylistSearcherWebApp.Services
                     var existingVideo = existingVideos.FirstOrDefault(x => x.VideoId == dbPlaylist.Playlistvideos.ToList()[i].Video.VideoId);
 
                     if (existingVideo != null)
-                        dbPlaylist.Playlistvideos.ToList()[i].Video.Id = existingVideo.Id;
+                        dbPlaylist.Playlistvideos.ElementAt(i).Video = existingVideo;
                 }
 
                 // Add playlist to DB
