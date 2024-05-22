@@ -32,6 +32,7 @@ namespace YTPlaylistSearcherWebApp.Data
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Userauthentication> Userauthentications { get; set; } = null!;
         public virtual DbSet<Video> Videos { get; set; } = null!;
+        public virtual DbSet<Videocomment> Videocomments { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,6 +51,7 @@ namespace YTPlaylistSearcherWebApp.Data
             modelBuilder.ApplyConfiguration(new Configurations.UserConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.UserauthenticationConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.VideoConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.VideocommentConfiguration());
             OnModelCreatingPartial(modelBuilder);
         }
 

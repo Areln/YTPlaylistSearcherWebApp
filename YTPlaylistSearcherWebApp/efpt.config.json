@@ -60,6 +60,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "videocomments",
+         "ObjectType": 0
+      },
+      {
          "Name": "videos",
          "ObjectType": 0
       }

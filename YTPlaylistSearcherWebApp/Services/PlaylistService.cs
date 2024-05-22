@@ -124,6 +124,7 @@ namespace YTPlaylistSearcherWebApp.Services
             var ytPlaylist = await GetPlaylistFromYT(playlistID);
             var ytModelPlaylist = PlaylistMapper.MapToModel(ytPlaylist);
 
+            // find differences between what youtube gives us and what we already have
             var vidsToRemove = dbPlaylist.Playlistvideos
                 .Where(x => ytModelPlaylist.Playlistvideos
                     .Where(z => z.Video.VideoId == x.Video.VideoId)
@@ -136,9 +137,9 @@ namespace YTPlaylistSearcherWebApp.Services
                     .Any() == false)
                 .ToList();
 
+            // re-use existing video records
             if (newVids.Count > 0)
             {
-                // we want to re-use existing video records so check for them here
                 var videoIDs = newVids.Select(x => x.Video.VideoId).ToList();
 
                 var existingVideos = await context.Videos.Where(x => videoIDs.Contains(x.VideoId)).ToListAsync();
@@ -161,11 +162,10 @@ namespace YTPlaylistSearcherWebApp.Services
                 dbPlaylist.Playlistvideos = dbPlaylist.Playlistvideos.Where(x => vidsToRemove.Contains(x) == false).ToList();
             }
 
-            // TODO: update needs to re-use existing video ids
             await _playlistRepository.UpdatePlaylist(context, dbPlaylist);
             await context.SaveChangesAsync();
 
-            // return fresh copy of db
+            // return fresh copy of db playlist
             var freshDto = await GetPlaylistSorted(context, playlistID, new SearchChipBagDTO());
 
             return freshDto;
