@@ -22,11 +22,11 @@ namespace YTPlaylistSearcherWebApp.Controllers
         }
 
         [HttpGet("GetLineUps")]
-        public async Task<IActionResult> GetLineUps()
+        public async Task<IActionResult> GetLineUps([FromQuery] string mapName)
         {
             try
             {
-                var playlist = await _lineUpsService.GetLineUps(_context);
+                var playlist = await _lineUpsService.GetLineUps(mapName, _context);
                 return Ok(playlist);
             }
             catch (Exception e)

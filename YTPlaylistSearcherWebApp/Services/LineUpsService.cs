@@ -13,9 +13,9 @@ namespace YTPlaylistSearcherWebApp.Services
             _lineUpsRepository = lineUpsRepository;
         }
 
-        public async Task<IEnumerable<LineUpDTO>> GetLineUps(CSContext context)
+        public async Task<IEnumerable<LineUpDTO>> GetLineUps(string mapName, CSContext context)
         {
-            var results = await _lineUpsRepository.GetLineUps(context);
+            var results = await _lineUpsRepository.GetLineUps(mapName, context);
             return results.Select(x => new LineUpDTO
             {
                 Id = x.Id,
@@ -34,6 +34,6 @@ namespace YTPlaylistSearcherWebApp.Services
 
     public interface ILineUpsService
     {
-        Task<IEnumerable<LineUpDTO>> GetLineUps(CSContext context);
+        Task<IEnumerable<LineUpDTO>> GetLineUps(string mapName, CSContext context);
     }
 }

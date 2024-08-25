@@ -12,7 +12,7 @@ namespace YTPlaylistSearcherWebApp.Repositories
 
         }
 
-        public async Task<IEnumerable<Lineup>> GetLineUps(CSContext context)
+        public async Task<IEnumerable<Lineup>> GetLineUps(string mapName, CSContext context)
         {
             return context.Lineups
                 .Include(x => x.Map)
@@ -20,12 +20,13 @@ namespace YTPlaylistSearcherWebApp.Repositories
                 .Include(x => x.Team)
                 .Include(x => x.ThrowStyleType)
                 .ToList()
+                .Where(x => x.Map.Slug == mapName)
                 .AsEnumerable();
         }
     }
 
     public interface ILineUpsRepository
     {
-        Task<IEnumerable<Lineup>> GetLineUps(CSContext context);
+        Task<IEnumerable<Lineup>> GetLineUps(string mapName, CSContext context);
     }
 }
