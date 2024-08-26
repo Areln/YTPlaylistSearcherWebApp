@@ -79,6 +79,12 @@ namespace YTPlaylistSearcherWebApp.Data.CS.Configurations
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_lineups_throw_styles");
 
+            entity.Property(e => e.ResultPath)
+                .HasMaxLength(150)
+                .HasColumnName("resultPath")
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
+
             OnConfigurePartial(entity);
         }
 

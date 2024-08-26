@@ -28,6 +28,7 @@ namespace YTPlaylistSearcherWebApp.Services
                 TeamAbbreviation = x.Team?.Abbreviation,
                 From = x.From,
                 To = x.To,
+                ResultPath = x.ResultPath
             });
         }
     }

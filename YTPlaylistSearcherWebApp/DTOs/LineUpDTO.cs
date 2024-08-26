@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string Path { get; set; }
+        public string ResultPath { get; set; }
         public string GrenadeType { get; set; }
         public string ThrowStyle { get; set; }
         public string Map { get; set; }
