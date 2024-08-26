@@ -17,6 +17,9 @@ namespace YTPlaylistSearcherWebApp.Data.CS.Configurations
         {
             entity.ToTable("lineups");
 
+            entity.HasIndex(e => e.ResultPath, "ResultPath_UNIQUE")
+                .IsUnique();
+
             entity.HasIndex(e => e.GrenadeTypeId, "fk_lineups_grenade_types_idx");
 
             entity.HasIndex(e => e.MapId, "fk_lineups_maps_idx");
@@ -46,6 +49,10 @@ namespace YTPlaylistSearcherWebApp.Data.CS.Configurations
                 .HasColumnName("path")
                 .UseCollation("utf8mb3_general_ci")
                 .HasCharSet("utf8mb3");
+
+            entity.Property(e => e.ResultPath)
+                .HasMaxLength(150)
+                .HasColumnName("resultPath");
 
             entity.Property(e => e.TeamId).HasColumnName("teamID");
 
@@ -78,12 +85,6 @@ namespace YTPlaylistSearcherWebApp.Data.CS.Configurations
                 .HasForeignKey(d => d.ThrowStyleTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_lineups_throw_styles");
-
-            entity.Property(e => e.ResultPath)
-                .HasMaxLength(150)
-                .HasColumnName("resultPath")
-                .UseCollation("utf8mb3_general_ci")
-                .HasCharSet("utf8mb3");
 
             OnConfigurePartial(entity);
         }

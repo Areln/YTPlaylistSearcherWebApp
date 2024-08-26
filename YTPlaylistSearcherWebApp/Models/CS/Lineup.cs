@@ -15,7 +15,7 @@ namespace YTPlaylistSearcherWebApp.Models.CS
         public int TeamId { get; set; }
         public string From { get; set; } = null!;
         public string To { get; set; } = null!;
-        public string ResultPath { get; set; } = null!;
+        public string? ResultPath { get; set; }
 
         public virtual Grenadetype GrenadeType { get; set; } = null!;
         public virtual Map Map { get; set; } = null!;
