@@ -260,14 +260,18 @@ namespace YTPlaylistSearcherWebApp.Services
         {
             var commentEntities = await _playlistRepository.GetVideoComments(context, videoID);
             var dtos = PlaylistMapper.MapToDTO(commentEntities);
+
+            var userID = int.Parse(value);
+
             dtos = dtos.Select(x =>
             {
-                if (x.UserId == int.Parse(value)) ;
+                if (x.UserId == userID)
                 {
                     x.CanDelete = true;
                 }
                 return x;
             }).ToList();
+
             return dtos;
         }
 

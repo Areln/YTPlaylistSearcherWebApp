@@ -21,7 +21,7 @@
     <div>
       <div>{{item.user.userName}} @ {{item.createdDate}}</div>
       <div>{{item.comment}}</div>
-      <button *ngIf="item.canDelete" mat-button (click)="deleteComment(item.id)">Delete</button>
+      <button *ngIf="item.canDelete == true" mat-button (click)="deleteComment(item.id)">Delete</button>
     </div>
     <mat-divider></mat-divider>
   </div>
