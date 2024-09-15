@@ -40,7 +40,6 @@ export class DiscoverSearchComponent {
   }
 
   public GetResults() {
-
     var searchString = (String)(this.searchForm.controls['searchInput'].value).toLowerCase();
 
     if (searchString != null) {

@@ -105,8 +105,12 @@
                 </div>
 
                 <div fxFlex="5">
-                  <button mat-mini-fab color="accent" aria-label="de-select play list" (click)="CreateSharedPost('video', element.id)">
+                  <button mat-mini-fab color="accent" aria-label="de-select play list" class="video-option" (click)="CreateSharedPost('video', element.id)">
                     <mat-icon>share</mat-icon>
+                  </button>
+
+                  <button mat-mini-fab color="accent" aria-label="de-select play list" class="video-option" (click)="SelectVideo(element)">
+                    <mat-icon>menu_open</mat-icon>
                   </button>
                 </div>
               </mat-card>

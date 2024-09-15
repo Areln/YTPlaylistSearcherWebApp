@@ -1,11 +1,11 @@
 
 
 <mat-card class="example-card" style="max-width:560px">
-  <!--<mat-card-header>
+  <mat-card-header>
     <div mat-card-avatar class="example-header-image"></div>
     <mat-card-title>{{data.title}}</mat-card-title>
-    <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-  </mat-card-header>-->
+    <!--<mat-card-subtitle>Dog Breed</mat-card-subtitle>-->
+  </mat-card-header>
   <div style="align-content:center">
     <iframe width="560" height="315" [src]="GetVideoID(data.videoID) | safe"
             title="YouTube video player"
@@ -23,10 +23,15 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <button mat-flat-button color="primary">LIKE</button>
-    <button mat-flat-button color="primary">SHARE</button>
+    <button mat-mini-fab color="accent" class="video-option">
+      <mat-icon>thumb_up</mat-icon>
+    </button>
+
+    <button mat-mini-fab color="accent" class="video-option">
+      <mat-icon>share</mat-icon>
+    </button>
   </mat-card-actions>
 
-  <app-comment-section></app-comment-section>
+  <app-comment-section [videoID]="data.id"></app-comment-section>
 
 </mat-card>

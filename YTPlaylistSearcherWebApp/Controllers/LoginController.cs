@@ -45,6 +45,7 @@ namespace YTPlaylistSearcherWebApp.Controllers
                 var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, userDTO.UserName),
+                        new Claim(ClaimTypes.Upn, userDTO.UserID.ToString()),
                         new Claim(ClaimTypes.Role, userDTO.Role)
                     };
                 var accessToken = _tokenService.GenerateAccessToken(claims);

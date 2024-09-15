@@ -216,7 +216,9 @@ namespace YTPlaylistSearcherWebApp.Services
 
             await _playlistRepository.AddSharedPost(context, newPost);
             await context.SaveChangesAsync();
-            await _shareFeedHub.Clients.All.SendAsync(WebSocketActions.NEW_POST, JsonConvert.SerializeObject(PlaylistMapper.MapToDTO(newPost)));
+            var dto = PlaylistMapper.MapToDTO(newPost);
+            dto.isOwned = true;
+            await _shareFeedHub.Clients.All.SendAsync(WebSocketActions.NEW_POST, JsonConvert.SerializeObject(dto));
 
             return newPost.Id;
         }
@@ -253,6 +255,41 @@ namespace YTPlaylistSearcherWebApp.Services
             var dtos = PlaylistMapper.MapToDTO(searchResults).ToList();
             return dtos.Take(100);
         }
+
+        public async Task<IEnumerable<VideoCommentDTO>> GetVideoComments(YTPSContext context, int videoID, string value)
+        {
+            var commentEntities = await _playlistRepository.GetVideoComments(context, videoID);
+            var dtos = PlaylistMapper.MapToDTO(commentEntities);
+            dtos = dtos.Select(x =>
+            {
+                if (x.UserId == int.Parse(value)) ;
+                {
+                    x.CanDelete = true;
+                }
+                return x;
+            }).ToList();
+            return dtos;
+        }
+
+        public async Task CreateComment(YTPSContext context, VideoCommentDTO newComment)
+        {
+            var entity = PlaylistMapper.MapToModel(newComment);
+            entity.User = await context.Users.FirstOrDefaultAsync(x => x.Id == newComment.User.UserID) ?? throw new Exception("User Not Found!");
+            await _playlistRepository.AddComment(context, entity);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteComment(YTPSContext context, VideoCommentDTO newComment, int userID)
+        {
+            var entity = await context.Videocomments.FirstOrDefaultAsync(x => x.Id == newComment.Id && x.UserId == userID);
+
+            if (entity == null)
+                throw new Exception("Comment not found!");
+
+            context.Remove(entity);
+
+            await context.SaveChangesAsync();
+        }
     }
 
     public interface IPlaylistService
@@ -267,5 +304,8 @@ namespace YTPlaylistSearcherWebApp.Services
         Task<int> CreateSharedPost(YTPSContext context, CreateSharedPostModel sharedPostModel, IHubContext<ShareFeedHub> _shareFeedHub);
         Task<bool> DeletePost(YTPSContext context, IHubContext<ShareFeedHub> _shareFeedHub, int id, string username);
         Task<IEnumerable<VideoDTO>> SearchVideos(YTPSContext context, AdvancedSearchRequestDTO searchRequest);
+        Task<IEnumerable<VideoCommentDTO>> GetVideoComments(YTPSContext context, int videoID, string value);
+        Task CreateComment(YTPSContext context, VideoCommentDTO newComment);
+        Task DeleteComment(YTPSContext context, VideoCommentDTO newComment, int userID);
     }
 }

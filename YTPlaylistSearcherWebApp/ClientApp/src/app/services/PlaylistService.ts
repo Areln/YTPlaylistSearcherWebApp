@@ -5,6 +5,7 @@ import { AdvancedSearchRequestDTO } from "../discover-search/discover-search.com
 import { PlaylistDTO, VideoDTO } from "../DTOs/PlaylistDTO";
 import { SharedPostDTO } from "../DTOs/SharedPostDTO";
 import { AuthenticatedResponse } from "../login/login.component";
+import { IVideoCommentDTO } from "../DTOs/IVideoCommentDTO";
 
 @Injectable({providedIn: 'root'})
 export class PlaylistService {
@@ -50,5 +51,17 @@ export class PlaylistService {
 
   SearchVideos(search: AdvancedSearchRequestDTO) {
     return this.http.post<any>(this.baseUrl + 'playlist/SearchVideos', search);
+  }
+
+  GetVideoComments(id: number) {
+    return this.http.get<IVideoCommentDTO[]>(this.baseUrl + 'playlist/GetVideoComments/' + id);
+  }
+
+  CreateComment(videoID: number, commentBody: string) {
+    return this.http.post(this.baseUrl + "playlist/CreateComment", { VideoID: videoID, Comment: commentBody });
+  }
+
+  DeleteComment(commentID: number) {
+    return this.http.post(this.baseUrl + "playlist/DeleteComment", { Id: commentID });
   }
 }

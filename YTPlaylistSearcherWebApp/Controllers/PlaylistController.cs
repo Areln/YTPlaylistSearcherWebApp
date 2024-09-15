@@ -158,5 +158,51 @@ namespace YTPlaylistSearcherWebApp.Controllers
                 return BadRequest(e.Message + " " + e.InnerException);
             }
         }
+
+        [HttpGet("GetVideoComments/{videoID}"), Authorize(Roles = "Admin, Trusted, Standard, Guest")]
+        public async Task<IActionResult> GetVideoDetails(int videoID)
+        {
+            try
+            {
+                var videoComments = await _playlistService.GetVideoComments(_context, videoID, User.FindFirst(ClaimTypes.Upn).Value);
+                return Ok(videoComments);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "GetVideoComments");
+                return BadRequest(e.Message + " " + e.InnerException);
+            }
+        }
+
+        [HttpPost("CreateComment"), Authorize(Roles = "Admin, Trusted, Standard, Guest")]
+        public async Task<IActionResult> CreateComment([FromBody] VideoCommentDTO newComment)
+        {
+            try
+            {
+                newComment.User = new UserDTO { UserID = int.Parse(User.FindFirst(ClaimTypes.Upn).Value) };
+                await _playlistService.CreateComment(_context, newComment);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "GetVideoComments");
+                return BadRequest(e.Message + " " + e.InnerException);
+            }
+        }
+
+        [HttpPost("DeleteComment"), Authorize(Roles = "Admin, Trusted, Standard, Guest")]
+        public async Task<IActionResult> DeleteComment([FromBody] VideoCommentDTO newComment)
+        {
+            try
+            {
+                await _playlistService.DeleteComment(_context, newComment, int.Parse(User.FindFirst(ClaimTypes.Upn).Value));
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "GetVideoComments");
+                return BadRequest(e.Message + " " + e.InnerException);
+            }
+        }
     }
 }

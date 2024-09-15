@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Runtime.Versioning;
 using YTPlaylistSearcherWebApp.Data;
+using YTPlaylistSearcherWebApp.Data.CS;
 using YTPlaylistSearcherWebApp.DTOs;
 using YTPlaylistSearcherWebApp.Models;
 
@@ -51,7 +52,7 @@ namespace YTPlaylistSearcherWebApp.Repositories
                 {
                     response = await client.GetAsync($"{YOUTUBE_HOST}/playlistItems?part=snippet%2CcontentDetails&maxResults={MAX_RESULTS}&pageToken={playlist.nextPageToken}&playlistId={playlistID}&key={ytKey}");
                     var tempList = JsonConvert.DeserializeObject<YTPlaylist>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
-                    
+
                     if (tempList?.items != null)
                     {
                         playlist.items = playlist.items.Concat(tempList.items);
@@ -110,7 +111,7 @@ namespace YTPlaylistSearcherWebApp.Repositories
             {
                 return null;
             }
-            
+
         }
 
         public async Task AddPlaylist(YTPSContext context, Playlist newPlaylist)
@@ -150,16 +151,33 @@ namespace YTPlaylistSearcherWebApp.Repositories
             await context.Sharedposts.AddAsync(newPost);
         }
 
-        public async Task<Sharedpost> GetPost(YTPSContext context, int id) 
+        public async Task<Sharedpost> GetPost(YTPSContext context, int id)
         {
             return await context.Sharedposts.Include(x => x.User).FirstOrDefaultAsync(context => context.Id == id);
         }
 
         public async Task<IEnumerable<Video>> SearchVideos(YTPSContext context, AdvancedSearchRequestDTO searchRequest)
         {
+            if (string.IsNullOrWhiteSpace(searchRequest.SearchPhrase))
+            {
+                // make a query that start at a random index and grab 25 videos, run it 4 times then generate guid and sort the 100 videos
+                var totalVideos = new List<Video>();
+
+                // chop the max result size up
+                for (int i = 0; i < 4; i++)
+                {
+                    int totalRecords = context.Videos.Count();
+                    int skip = new Random().Next(0, totalRecords - 25);
+                    totalVideos.AddRange(await context.Videos.Skip(skip)
+                        .Take(25)
+                        .ToListAsync());
+                }
+
+                return totalVideos.OrderBy(x => Guid.NewGuid());
+            }
+
             // This query searches the videos table where the title of the video or the channel title who uploaded the video
             // contains our search input. We include the playlist videos so we can display which playlists the song already belongs to in the DB.
-
             return await context.Videos.Where(x =>
                 x.Title.ToLower().Contains(searchRequest.SearchPhrase.ToLower()) ||
                 x.ChannelTitle.ToLower().Contains(searchRequest.SearchPhrase.ToLower())
@@ -167,6 +185,17 @@ namespace YTPlaylistSearcherWebApp.Repositories
                 .Include(x => x.Playlistvideos)
                 .ThenInclude(x => x.Playlist)
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Videocomment>> GetVideoComments(YTPSContext context, int videoID)
+        {
+            return await context.Videocomments.Include(x => x.User).Where(x => x.VideoId == videoID).ToListAsync();
+        }
+
+        public async Task AddComment(YTPSContext context, Videocomment entity)
+        {
+            entity.CreatedDate = DateTime.Now;
+            context.Videocomments.Add(entity);
         }
     }
 
@@ -184,5 +213,7 @@ namespace YTPlaylistSearcherWebApp.Repositories
         Task AddSharedPost(YTPSContext context, Sharedpost newPost);
         Task<Sharedpost> GetPost(YTPSContext context, int id);
         Task<IEnumerable<Video>> SearchVideos(YTPSContext context, AdvancedSearchRequestDTO searchRequest);
+        Task<IEnumerable<Videocomment>> GetVideoComments(YTPSContext context, int videoID);
+        Task AddComment(YTPSContext context, Videocomment entity);
     }
 }

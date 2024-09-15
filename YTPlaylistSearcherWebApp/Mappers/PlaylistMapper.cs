@@ -9,6 +9,7 @@ namespace YTPlaylistSearcherWebApp.Mappers
         // YT MODELS TO DB MODELS
 
         // DB MODELS TO DTO
+        #region DB Model -> DTO
         public static PlaylistDTO MapToDTO(Playlist playlistModel)
         {
             return new PlaylistDTO
@@ -116,7 +117,39 @@ namespace YTPlaylistSearcherWebApp.Mappers
             };
         }
 
+        public static IEnumerable<VideoCommentDTO> MapToDTO(IEnumerable<Videocomment> videocomments)
+        {
+            return videocomments.Select(x => MapToDTO(x)).ToList();
+        }
+
+        public static VideoCommentDTO MapToDTO(Videocomment videocomment)
+        {
+            return new VideoCommentDTO
+            {
+                Id = videocomment.Id,
+                VideoId = videocomment.VideoId,
+                UserId = videocomment.User.Id,
+                User = MapToDTO(videocomment.User),
+                Comment = videocomment.Comment,
+                CreatedDate = videocomment.CreatedDate.ToShortDateString(),
+                MembersOnly = videocomment.MembersOnly,
+                ModifiedDate = videocomment.ModifiedDate?.ToShortDateString(),
+            };
+        }
+
+        public static UserDTO MapToDTO(User user)
+        {
+            return new UserDTO
+            {
+                UserID = user.Id,
+                ProfilePicture = user.ProfilePicture,
+                UserName = user.UserName,
+            };
+        }
+        #endregion
+
         // DTO TO DB MODELS
+        #region DTO -> DB Model
         public static Playlist MapToModel(PlaylistDTO playlistDTO)
         {
             return new Playlist
@@ -124,9 +157,9 @@ namespace YTPlaylistSearcherWebApp.Mappers
                 PlaylistId = playlistDTO.PlaylistID,
                 PlaylistTitle = playlistDTO.PlaylistTitle,
                 ChannelTitle = playlistDTO.ChannelOwner,
-                Playlistvideos = playlistDTO.Videos.Select(x => new Playlistvideo 
+                Playlistvideos = playlistDTO.Videos.Select(x => new Playlistvideo
                 {
-                    Video = new Video 
+                    Video = new Video
                     {
                         VideoId = x.VideoID,
                         Title = x.Title,
@@ -141,8 +174,23 @@ namespace YTPlaylistSearcherWebApp.Mappers
                 }).ToList(),
             };
         }
+        public static Videocomment MapToModel(VideoCommentDTO videocommentDTO)
+        {
+            return new Videocomment
+            {
+                VideoId = videocommentDTO.VideoId,
+                Comment = videocommentDTO.Comment,
+                User = new User
+                {
+                    Id = videocommentDTO.User.UserID,
+                    UserName = videocommentDTO.User.UserName,
+                }
+            };
+        }
+        #endregion
 
         // YT TO DTO
+        #region YT -> DTO
         public static PlaylistDetailsDTO MapToDTO(YTGetPlaylistDetailsResponse response)
         {
             return new PlaylistDetailsDTO
@@ -153,6 +201,6 @@ namespace YTPlaylistSearcherWebApp.Mappers
                 PlaylistID = response.items.First().id
             };
         }
-
+        #endregion
     }
 }

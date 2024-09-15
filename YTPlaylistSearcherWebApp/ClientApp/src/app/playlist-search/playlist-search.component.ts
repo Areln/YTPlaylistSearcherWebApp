@@ -4,6 +4,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PlaylistDTO, VideoDTO } from '../DTOs/PlaylistDTO';
 import { ActivatedRoute } from '@angular/router'
 import { PlaylistService } from '../services/PlaylistService';
+import { MatDialog } from '@angular/material/dialog';
+import { DiscoverSearchDetailsComponent } from '../discover-search/discover-search-details/discover-search-details.component';
 
 @Component({
   selector: 'app-playlist-search',
@@ -28,7 +30,8 @@ export class PlaylistSearchComponent {
     private formBuilder: FormBuilder,
     private sanitizer: DomSanitizer,
     private route: ActivatedRoute,
-    private _playlistService: PlaylistService) {
+    private _playlistService: PlaylistService,
+    private dialog: MatDialog) {
 
     this.defaultSearch = this.route.snapshot.paramMap.get('id');
 
@@ -160,5 +163,14 @@ export class PlaylistSearchComponent {
   public PlaylistSelected(playlistID: string) {
     this.loadPlaylistForm.controls.playlistLink.patchValue(playlistID);
     this.PlaylistSubmit();
+  }
+
+  public SelectVideo(video: VideoDTO) {
+    this.dialog.open(DiscoverSearchDetailsComponent,
+      {
+        data: video,
+        maxWidth: "100%",
+        disableClose: false
+      });
   }
 }
