@@ -26,7 +26,4 @@ export class DiscoverSearchDetailsComponent {
     //}
     //return "";
   }
-  ngOnInit() {
-    console.log(this.data);
-  }
 }

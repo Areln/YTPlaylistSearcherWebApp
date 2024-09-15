@@ -30,13 +30,10 @@ export class SharedPostsFeedComponent {
       this.sharedPosts = result;
       this.isLoading = false;
     }, error => {
-      console.log(error);
       this.isLoading = false;
     });
 
-    _postHub.newMessageEvent.subscribe(data => {
-      console.log('New Message Event:' + data);
-    });
+    _postHub.newMessageEvent.subscribe(data => { });
 
     _postHub.newPost.subscribe(post => {
       this.sharedPosts.unshift(post);

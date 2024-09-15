@@ -145,9 +145,7 @@ export class PlaylistSearchComponent {
 
   // TODO: Create Share component
   public CreateSharedPost(type: string, id: number) {
-    this._playlistService.CreateSharedPost({ type: type, contentID: id}).subscribe(result => {
-      console.log('new post ID: ' + result);
-    });
+    this._playlistService.CreateSharedPost({ type: type, contentID: id}).subscribe(result => { });
   }
 
   public SharePlaylist(playlist: PlaylistDTO) {

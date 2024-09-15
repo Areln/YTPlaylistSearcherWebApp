@@ -20,7 +20,6 @@ export class PlaylistsViewComponent {
     this.isLoading = true;
 
     _playlistService.GetPlaylists().subscribe(result => {
-      console.log(result);
       this.isLoading = false;
       this.playlists = result;
     }, error => {
