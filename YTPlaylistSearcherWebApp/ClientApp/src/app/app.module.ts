@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
@@ -26,6 +26,8 @@ import { DiscoverSearchComponent } from './discover-search/discover-search.compo
 import { DiscoverSearchDetailsComponent } from './discover-search/discover-search-details/discover-search-details.component';
 import { SafePipe } from './safe.pipe';
 import { CommentSectionComponent } from './shared/comment-section/comment-section.component';
+import { TokenInterceptor } from '../TokenInterceptor';
+import { ProfileComponent } from './profile/profile.component';
 
 export function tokenGetter() {
   return localStorage.getItem("jwt");
@@ -50,7 +52,8 @@ export function tokenGetter() {
     DiscoverSearchComponent,
     DiscoverSearchDetailsComponent,
     SafePipe,
-    CommentSectionComponent
+    CommentSectionComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -65,10 +68,11 @@ export function tokenGetter() {
     RouterModule.forRoot([
       { path: 'loggedout', component: LoginComponent },
       { path: 'search/:id', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+      { path: 'profile/:username', component: ProfileComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'search', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: '', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'cs/lineups', component: CounterStrikeLineUpsSearchComponent, canActivate: [AuthGuard] },
-      { path: 'shared', component: SharedPostsFeedComponent },
+      { path: 'shared', component: SharedPostsFeedComponent, canActivate: [AuthGuard] },
       { path: 'discover', component: DiscoverSearchComponent, canActivate: [AuthGuard] }
       //{ path: 'counter', component: CounterComponent },
       //{ path: 'fetch-data', component: FetchDataComponent },
@@ -77,7 +81,14 @@ export function tokenGetter() {
     BrowserAnimationsModule,
     SharedModule,
   ],
-  providers: [AuthGuard],
+  providers: [
+    AuthGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

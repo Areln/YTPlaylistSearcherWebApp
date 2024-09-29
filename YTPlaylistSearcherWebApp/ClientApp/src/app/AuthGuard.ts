@@ -9,6 +9,17 @@ import { AuthenticatedResponse } from './login/login.component';
 export class AuthGuard implements CanActivate {
   constructor(private router: Router, private jwtHelper: JwtHelperService, private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) { }
 
+  public onLogin(response: AuthenticatedResponse) {
+    const token = response.token;
+    const refreshToken = response.refreshToken;
+    localStorage.setItem("jwt", token);
+    localStorage.setItem("refreshToken", refreshToken);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem("jwt");
+  }
+
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     const token = localStorage.getItem("jwt");
     if (token && !this.jwtHelper.isTokenExpired(token)) {
@@ -22,7 +33,7 @@ export class AuthGuard implements CanActivate {
     return isRefreshSuccess;
   }
 
-  private async tryRefreshingTokens(token: any): Promise<boolean> {
+  public async tryRefreshingTokens(token: any): Promise<boolean> {
     const refreshToken: any = localStorage.getItem("refreshToken");
     if (!token || !refreshToken) {
       return false;
@@ -39,7 +50,6 @@ export class AuthGuard implements CanActivate {
           })
         }).subscribe({
           next: (res: AuthenticatedResponse) => {
-
             resolve(res);
           },
           error: (_) => {
@@ -51,8 +61,7 @@ export class AuthGuard implements CanActivate {
       });
 
       if (refreshRes != null) {
-        localStorage.setItem("jwt", refreshRes.token);
-        localStorage.setItem("refreshToken", refreshRes.refreshToken);
+        this.onLogin(refreshRes);
         isRefreshSuccess = true;
       } else {
         isRefreshSuccess = false;

@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PlaylistService } from '../services/PlaylistService';
+import { AuthGuard } from '../AuthGuard';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,8 @@ export class LoginComponent {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private _playlistService: PlaylistService) {
+    private _playlistService: PlaylistService,
+    private authguard: AuthGuard) {
 
 
     this.loginForm = formBuilder.group({
@@ -45,12 +47,7 @@ export class LoginComponent {
       this._playlistService.SubmitLogin({ UserName: this.loginForm.controls.email.value, Password: this.loginForm.controls.password.value })
         .subscribe({
           next: (response: AuthenticatedResponse) => {
-            console.log(response);
-            const token = response.token;
-            const refreshToken = response.refreshToken;
-            localStorage.setItem("jwt", token);
-            localStorage.setItem("refreshToken", refreshToken);
-            this.invalidLogin = false;
+            this.authguard.onLogin(response);
             this.router.navigate(["/search"]);
           },
           error: (err: HttpErrorResponse) => {
@@ -72,13 +69,9 @@ export class LoginComponent {
       })
         .subscribe({
           next: (response: AuthenticatedResponse) => {
-            console.log(response);
-            const token = response.token;
-            const refreshToken = response.refreshToken;
-            localStorage.setItem("jwt", token);
-            localStorage.setItem("refreshToken", refreshToken);
-            this.invalidLogin = false;
+            this.authguard.onLogin(response);
             this.router.navigate(["/search"]);
+            this.invalidLogin = false;
           },
           error: (err: HttpErrorResponse) => {
             this.invalidLogin = true
