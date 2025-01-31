@@ -12,7 +12,8 @@ const PROXY_CONFIG = [
       "/environment",
       "/login",
       "/debug",
-      "/token"
+      "/token",
+      "/googleauthentication"
    ],
     target: target,
     secure: false,

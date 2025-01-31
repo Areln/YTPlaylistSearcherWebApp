@@ -69,7 +69,8 @@ export function tokenGetter() {
       { path: '', component: PlaylistSearchComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'cs/lineups', component: CounterStrikeLineUpsSearchComponent, canActivate: [AuthGuard] },
       { path: 'shared', component: SharedPostsFeedComponent },
-      { path: 'discover', component: DiscoverSearchComponent, canActivate: [AuthGuard] }
+      { path: 'discover', component: DiscoverSearchComponent, canActivate: [AuthGuard] },
+      //{ path: 'signin-google', component: PlaylistSearchComponent, canActivate: [AuthGuard] }
       //{ path: 'counter', component: CounterComponent },
       //{ path: 'fetch-data', component: FetchDataComponent },
 

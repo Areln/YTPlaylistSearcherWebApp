@@ -253,6 +253,11 @@ namespace YTPlaylistSearcherWebApp.Services
             var dtos = PlaylistMapper.MapToDTO(searchResults).ToList();
             return dtos.Take(100);
         }
+
+        public async Task CreateTempPlaylist()
+        {
+            await _playlistRepository.CreateYTPlaylist();
+        }
     }
 
     public interface IPlaylistService
@@ -267,5 +272,6 @@ namespace YTPlaylistSearcherWebApp.Services
         Task<int> CreateSharedPost(YTPSContext context, CreateSharedPostModel sharedPostModel, IHubContext<ShareFeedHub> _shareFeedHub);
         Task<bool> DeletePost(YTPSContext context, IHubContext<ShareFeedHub> _shareFeedHub, int id, string username);
         Task<IEnumerable<VideoDTO>> SearchVideos(YTPSContext context, AdvancedSearchRequestDTO searchRequest);
+        Task CreateTempPlaylist();
     }
 }

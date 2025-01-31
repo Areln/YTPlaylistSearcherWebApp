@@ -22,4 +22,9 @@ namespace YTPlaylistSearcherWebApp.Models
 
         public virtual ICollection<User> Users { get; set; }
     }
+
+    public class GoogleTokenModel
+    {
+        public string IdToken { get; set; }
+    }
 }

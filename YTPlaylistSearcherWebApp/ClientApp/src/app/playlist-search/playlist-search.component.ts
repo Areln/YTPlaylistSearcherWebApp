@@ -161,4 +161,10 @@ export class PlaylistSearchComponent {
     this.loadPlaylistForm.controls.playlistLink.patchValue(playlistID);
     this.PlaylistSubmit();
   }
+
+  public CreateYTPlaylist() {
+    this._playlistService.CreateYTPlaylist().subscribe(result => {
+      console.log('playlist created?');
+    });
+  }
 }

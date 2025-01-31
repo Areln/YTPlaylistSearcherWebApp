@@ -158,5 +158,20 @@ namespace YTPlaylistSearcherWebApp.Controllers
                 return BadRequest(e.Message + " " + e.InnerException);
             }
         }
+
+        [HttpGet("CreateTempPlaylist")]
+        public async Task<IActionResult> CreateTempPlaylist()
+        {
+            try
+            {
+                await _playlistService.CreateTempPlaylist();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "CreateTempPlaylist");
+                return BadRequest(e.Message + " " + e.InnerException);
+            }
+        }
     }
 }

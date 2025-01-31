@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -10,9 +12,8 @@ using YTPlaylistSearcherWebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-//builder.Services.AddControllersWithViews();
-builder.Services.AddAuthentication(opt => {
+builder.Services.AddAuthentication(opt =>
+{
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
@@ -35,7 +36,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", builder => builder
         .WithOrigins("http://localhost:44422", "https://localhost:44422", "http://localhost:7298", "https://localhost:7298").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
         .WithOrigins("https://ytplaylistsearcherwebapp.azurewebsites.net").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
-);
+    );
 });
 
 builder.Services.AddSignalR();
@@ -65,10 +66,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
+app.UseCors("CorsPolicy"); // Apply CORS policy here
+
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("CorsPolicy");
 
 app.MapHub<ShareFeedHub>("/posts");
 

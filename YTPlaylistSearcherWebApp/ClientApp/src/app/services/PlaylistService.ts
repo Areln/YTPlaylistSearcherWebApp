@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import { AdvancedSearchRequestDTO } from "../discover-search/discover-search.component";
@@ -33,6 +33,7 @@ export class PlaylistService {
   }
 
   GetPlaylists() {
+    console.log(this.baseUrl);
     return this.http.get<PlaylistDTO[]>(this.baseUrl + 'playlist/GetPlaylists');
   }
 
@@ -50,5 +51,15 @@ export class PlaylistService {
 
   SearchVideos(search: AdvancedSearchRequestDTO) {
     return this.http.post<any>(this.baseUrl + 'playlist/SearchVideos', search);
+  }
+
+  CreateYTPlaylist() {
+    //return this.http.get<string>(this.baseUrl + 'playlist/CreateTempPlaylist');
+    return this.http.get<string>(this.baseUrl + 'googleauthentication/signin');
+  }
+
+  signInWithGoogle(token: string) {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post<any>(this.baseUrl + 'googleauthentication/callback', { IdToken: token }, { headers: headers });
   }
 }

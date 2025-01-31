@@ -4,9 +4,11 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Runtime.Versioning;
+using System.Text;
 using YTPlaylistSearcherWebApp.Data;
 using YTPlaylistSearcherWebApp.DTOs;
 using YTPlaylistSearcherWebApp.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace YTPlaylistSearcherWebApp.Repositories
 {
@@ -32,6 +34,33 @@ namespace YTPlaylistSearcherWebApp.Repositories
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
+        async Task<string> MakePostRequest(string url, object content)
+        {
+            var todoItemJson = new StringContent(
+                JsonConvert.SerializeObject(content),
+                Encoding.UTF8,
+                Application.Json); // using static System.Net.Mime.MediaTypeNames;
+
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.PostAsync(url, todoItemJson);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        }
+
+        // TODO requests to yt api should be in a youtube service   
+        public async Task CreateYTPlaylist()
+        {
+            var ytKey = _configuration.GetValue(typeof(string), "YTKey");
+
+            var requestResponse = await MakePostRequest($"{YOUTUBE_HOST}/playlists?part=snippet&key={ytKey}", new YTNewPlaylist
+            {
+                snippet = new YTNewPlaylistSnippet { title = "temp" },
+                status = new Status()
+            });
+
+            var temp = requestResponse;
+        }
+
         public async Task<YTPlaylist> GetPlaylistFromYT(string playlistID)
         {
             var client = _httpClientFactory.CreateClient();
@@ -51,7 +80,7 @@ namespace YTPlaylistSearcherWebApp.Repositories
                 {
                     response = await client.GetAsync($"{YOUTUBE_HOST}/playlistItems?part=snippet%2CcontentDetails&maxResults={MAX_RESULTS}&pageToken={playlist.nextPageToken}&playlistId={playlistID}&key={ytKey}");
                     var tempList = JsonConvert.DeserializeObject<YTPlaylist>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
-                    
+
                     if (tempList?.items != null)
                     {
                         playlist.items = playlist.items.Concat(tempList.items);
@@ -110,7 +139,7 @@ namespace YTPlaylistSearcherWebApp.Repositories
             {
                 return null;
             }
-            
+
         }
 
         public async Task AddPlaylist(YTPSContext context, Playlist newPlaylist)
@@ -150,7 +179,7 @@ namespace YTPlaylistSearcherWebApp.Repositories
             await context.Sharedposts.AddAsync(newPost);
         }
 
-        public async Task<Sharedpost> GetPost(YTPSContext context, int id) 
+        public async Task<Sharedpost> GetPost(YTPSContext context, int id)
         {
             return await context.Sharedposts.Include(x => x.User).FirstOrDefaultAsync(context => context.Id == id);
         }
@@ -184,5 +213,7 @@ namespace YTPlaylistSearcherWebApp.Repositories
         Task AddSharedPost(YTPSContext context, Sharedpost newPost);
         Task<Sharedpost> GetPost(YTPSContext context, int id);
         Task<IEnumerable<Video>> SearchVideos(YTPSContext context, AdvancedSearchRequestDTO searchRequest);
+
+        Task CreateYTPlaylist();
     }
 }
