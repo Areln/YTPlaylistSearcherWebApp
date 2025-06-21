@@ -21,7 +21,7 @@ import { AuthGuard } from './AuthGuard';
 import { SharedPostsFeedComponent } from './shared-posts-feed/shared-posts-feed.component';
 import { MyProfileComponent } from './my-profile/my-profile.component';
 import { MyPostsComponent } from './my-profile/my-posts/my-posts.component';
-import { SuikaCloneComponent } from './suika-clone/suika-clone.component';
+//import { SuikaCloneComponent } from './suika-clone/suika-clone.component';
 import { DiscoverSearchComponent } from './discover-search/discover-search.component';
 import { DiscoverSearchDetailsComponent } from './discover-search/discover-search-details/discover-search-details.component';
 import { SafePipe } from './safe.pipe';
@@ -48,7 +48,7 @@ export function tokenGetter() {
     SharedPostsFeedComponent,
     MyProfileComponent,
     MyPostsComponent,
-    SuikaCloneComponent,
+    //SuikaCloneComponent,
     DiscoverSearchComponent,
     DiscoverSearchDetailsComponent,
     SafePipe,

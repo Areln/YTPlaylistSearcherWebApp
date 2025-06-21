@@ -31,39 +31,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\Build\builds.data" />
-    <Content Remove="wwwroot\Build\builds.framework.js" />
-    <Content Remove="wwwroot\Build\builds.loader.js" />
-    <Content Remove="wwwroot\Build\builds.wasm" />
     <Content Remove="wwwroot\index.html" />
-    <Content Remove="wwwroot\TemplateData\favicon.ico" />
-    <Content Remove="wwwroot\TemplateData\fullscreen-button.png" />
-    <Content Remove="wwwroot\TemplateData\progress-bar-empty-dark.png" />
-    <Content Remove="wwwroot\TemplateData\progress-bar-empty-light.png" />
-    <Content Remove="wwwroot\TemplateData\progress-bar-full-dark.png" />
-    <Content Remove="wwwroot\TemplateData\progress-bar-full-light.png" />
-    <Content Remove="wwwroot\TemplateData\style.css" />
-    <Content Remove="wwwroot\TemplateData\unity-logo-dark.png" />
-    <Content Remove="wwwroot\TemplateData\unity-logo-light.png" />
-    <Content Remove="wwwroot\TemplateData\webgl-logo.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\Build\builds.data" />
-    <None Include="wwwroot\Build\builds.framework.js" />
-    <None Include="wwwroot\Build\builds.loader.js" />
-    <None Include="wwwroot\Build\builds.wasm" />
     <None Include="wwwroot\index.html" />
-    <None Include="wwwroot\TemplateData\favicon.ico" />
-    <None Include="wwwroot\TemplateData\fullscreen-button.png" />
-    <None Include="wwwroot\TemplateData\progress-bar-empty-dark.png" />
-    <None Include="wwwroot\TemplateData\progress-bar-empty-light.png" />
-    <None Include="wwwroot\TemplateData\progress-bar-full-dark.png" />
-    <None Include="wwwroot\TemplateData\progress-bar-full-light.png" />
-    <None Include="wwwroot\TemplateData\style.css" />
-    <None Include="wwwroot\TemplateData\unity-logo-dark.png" />
-    <None Include="wwwroot\TemplateData\unity-logo-light.png" />
-    <None Include="wwwroot\TemplateData\webgl-logo.png" />
   </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

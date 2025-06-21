@@ -54,6 +54,7 @@ export class AuthGuard implements CanActivate {
           },
           error: (_) => {
             isRefreshSuccess = false;
+            localStorage.removeItem("jwt")
             console.log(_);
             resolve(null);
           }
