@@ -68,13 +68,15 @@ namespace YTPlaylistSearcherWebApp.Services
 
                 var existingVideos = await context.Videos.Where(x => videoIDs.Contains(x.VideoId)).ToListAsync();
 
-                for (int i = 0; i < dbPlaylist.Playlistvideos.Count(); i++)
+                var playlistVideosList = dbPlaylist.Playlistvideos.ToList();
+                for (int i = 0; i < playlistVideosList.Count; i++)
                 {
-                    var existingVideo = existingVideos.FirstOrDefault(x => x.VideoId == dbPlaylist.Playlistvideos.ToList()[i].Video.VideoId);
-
+                    var existingVideo = existingVideos.FirstOrDefault(x => x.VideoId == playlistVideosList[i].Video.VideoId);
                     if (existingVideo != null)
-                        dbPlaylist.Playlistvideos.ElementAt(i).Video = existingVideo;
+                        playlistVideosList[i].Video = existingVideo;
                 }
+                dbPlaylist.Playlistvideos = playlistVideosList;
+
 
                 // Add playlist to DB
                 await _playlistRepository.AddPlaylist(context, dbPlaylist);
@@ -124,18 +126,20 @@ namespace YTPlaylistSearcherWebApp.Services
             var ytPlaylist = await GetPlaylistFromYT(playlistID);
             var ytModelPlaylist = PlaylistMapper.MapToModel(ytPlaylist);
 
-            // find differences between what youtube gives us and what we already have
+            // Build sets of VideoIds for fast lookup
+            var ytVideoIds = new HashSet<string>(ytModelPlaylist.Playlistvideos.Select(pv => pv.Video.VideoId));
+            var dbVideoIds = new HashSet<string>(dbPlaylist.Playlistvideos.Select(pv => pv.Video.VideoId));
+
+            // Videos to remove: in DB but not in YT
             var vidsToRemove = dbPlaylist.Playlistvideos
-                .Where(x => ytModelPlaylist.Playlistvideos
-                    .Where(z => z.Video.VideoId == x.Video.VideoId)
-                    .Any() == false)
+                .Where(x => !ytVideoIds.Contains(x.Video.VideoId))
                 .ToList();
 
+            // New videos: in YT but not in DB
             var newVids = ytModelPlaylist.Playlistvideos
-                .Where(x => dbPlaylist.Playlistvideos
-                    .Where(z => z.Video.VideoId == x.Video.VideoId)
-                    .Any() == false)
+                .Where(x => !dbVideoIds.Contains(x.Video.VideoId))
                 .ToList();
+
 
             // re-use existing video records
             if (newVids.Count > 0)
@@ -158,9 +162,12 @@ namespace YTPlaylistSearcherWebApp.Services
 
             if (vidsToRemove.Count > 0)
             {
-                // set db playlist videos = db playlist videos where vids to remove does not contain
-                dbPlaylist.Playlistvideos = dbPlaylist.Playlistvideos.Where(x => vidsToRemove.Contains(x) == false).ToList();
+                var vidsToRemoveSet = new HashSet<Playlistvideo>(vidsToRemove);
+                dbPlaylist.Playlistvideos = dbPlaylist.Playlistvideos
+                    .Where(x => !vidsToRemoveSet.Contains(x))
+                    .ToList();
             }
+
 
             await _playlistRepository.UpdatePlaylist(context, dbPlaylist);
             await context.SaveChangesAsync();
@@ -204,15 +211,31 @@ namespace YTPlaylistSearcherWebApp.Services
                 thumbnails = string.Join(',', _thumbnails);
             }
 
+            // Fetch user only once
+            var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == sharedPostModel.UserName);
+
+            Video? video = null;
+            Playlist? playlist = null;
+
+            if (sharedPostModel.Type == "video")
+            {
+                video = await context.Videos.FirstOrDefaultAsync(x => x.Id == sharedPostModel.ContentID);
+            }
+            else
+            {
+                playlist = await context.Playlists.FirstOrDefaultAsync(x => x.Id == sharedPostModel.ContentID);
+            }
+
             var newPost = new Sharedpost
             {
-                User = context.Users.Where(x => x.UserName == sharedPostModel.UserName).FirstOrDefault(),
-                Content = sharedPostModel.Type == "video" ? context.Playlistvideos.Select(x => x.Video).Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().Title : context.Playlists.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().PlaylistTitle,
+                User = user,
+                Content = sharedPostModel.Type == "video" ? video?.Title : playlist?.PlaylistTitle,
                 CreatedDate = DateTime.Now,
-                Thumbnail = sharedPostModel.Type == "video" ? context.Playlistvideos.Select(x => x.Video).Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().Thumbnail : thumbnails,
-                Link = sharedPostModel.Type == "video" ? context.Playlistvideos.Select(x => x.Video).Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().VideoId : context.Playlists.Where(x => x.Id == sharedPostModel.ContentID).FirstOrDefault().PlaylistId,
+                Thumbnail = sharedPostModel.Type == "video" ? video?.Thumbnail : thumbnails,
+                Link = sharedPostModel.Type == "video" ? video?.VideoId : playlist?.PlaylistId,
                 Type = sharedPostModel.Type,
             };
+
 
             await _playlistRepository.AddSharedPost(context, newPost);
             await context.SaveChangesAsync();
@@ -225,12 +248,22 @@ namespace YTPlaylistSearcherWebApp.Services
 
         public async Task<IEnumerable<string>> GetPlaylistThumbnails(YTPSContext context, int playlistID)
         {
-            var temp = context.Playlists.Include(x => x.Playlistvideos)
-                                            .ThenInclude(x => x.Video)
-                                                .Where(x => x.Id == playlistID)
-                                                .FirstOrDefault().Playlistvideos.Take(6).Select(x => x.Video.Thumbnail).AsEnumerable();
-            return temp;
+            var playlist = await context.Playlists
+                .AsNoTracking()
+                .Include(x => x.Playlistvideos)
+                .ThenInclude(x => x.Video)
+                .FirstOrDefaultAsync(x => x.Id == playlistID);
+
+
+            if (playlist == null)
+                return Enumerable.Empty<string>();
+
+            return playlist.Playlistvideos
+                .Take(6)
+                .Select(x => x.Video.Thumbnail)
+                .Where(t => t != null); // Optionally filter out null thumbnails
         }
+
 
         public async Task<bool> DeletePost(YTPSContext context, IHubContext<ShareFeedHub> _shareFeedHub, int id, string username)
         {

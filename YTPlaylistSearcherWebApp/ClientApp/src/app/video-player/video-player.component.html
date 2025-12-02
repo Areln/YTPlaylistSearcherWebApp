@@ -1,0 +1,50 @@
+<div class="video-player-container">
+  <div class="video-player-header">
+    <button mat-button (click)="goBack()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </button>
+    <div class="content-type-badge" *ngIf="contentType">
+      <mat-chip-set>
+        <mat-chip [color]="contentType === 'movie' ? 'primary' : 'accent'">
+          {{ contentType === 'movie' ? 'Movie' : 'TV Show' }}
+        </mat-chip>
+      </mat-chip-set>
+    </div>
+    <button mat-button (click)="goToSearch()" class="search-button">
+      <mat-icon>search</mat-icon>
+      New Search
+    </button>
+  </div>
+
+  <div class="video-player-content">
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Loading video...</p>
+    </div>
+
+    <div *ngIf="!isLoading && iframeSrc" class="video-iframe-container">
+      <iframe 
+        [src]="iframeSrc" 
+        width="100%" 
+        height="600" 
+        frameborder="0" 
+        allowfullscreen
+        class="video-iframe">
+      </iframe>
+    </div>
+
+    <div *ngIf="!isLoading && !iframeSrc" class="error-container">
+      <mat-card class="error-card">
+        <mat-card-content>
+          <mat-icon class="error-icon">error_outline</mat-icon>
+          <h3>Video Not Found</h3>
+          <p>The requested video could not be loaded.</p>
+          <button mat-raised-button color="primary" (click)="goToSearch()">
+            Search Again
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

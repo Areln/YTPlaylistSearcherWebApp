@@ -12,6 +12,7 @@ const PROXY_CONFIG = [
       "/environment",
       "/login",
       "/debug",
+      "/tmdb",
       "/token"
    ],
     target: target,

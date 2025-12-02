@@ -64,4 +64,8 @@ export class PlaylistService {
   DeleteComment(commentID: number) {
     return this.http.post(this.baseUrl + "playlist/DeleteComment", { Id: commentID });
   }
+
+  TmdbSearch(searchString: string) {
+    return this.http.get<IVideoCommentDTO[]>(this.baseUrl + 'tmdb/Search/' + searchString);
+  }
 }
