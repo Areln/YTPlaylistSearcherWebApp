@@ -10,126 +10,166 @@
   </div>
 
   <div fxLayout="row" style="margin-bottom: 20px;">
-    <button mat-raised-button color="primary" (click)="openAddForm()" *ngIf="!showForm">
+    <button mat-raised-button color="primary" (click)="openAddForm()">
       Add New Entry
     </button>
   </div>
 
-  <!-- Form Section -->
-  <mat-card *ngIf="showForm" style="margin-bottom: 20px;">
-    <mat-card-header>
-      <mat-card-title>{{ isEditing ? 'Edit Entry' : 'Add New Entry' }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
+  <!-- Form Dialog -->
+  <div *ngIf="showForm" class="form-overlay" (click)="cancelForm()">
+    <div class="form-dialog" (click)="$event.stopPropagation()">
+      <div class="form-header">
+        <h2>{{ isEditing ? 'Edit Entry' : 'Add New Entry' }}</h2>
+        <button mat-icon-button (click)="cancelForm()" class="close-button">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
       <form [formGroup]="honeyMediaForm" (ngSubmit)="onSubmit()">
-        <div fxLayout="column" fxLayoutGap="10px">
-          <mat-form-field>
-            <mat-label>Media Title *</mat-label>
-            <input matInput formControlName="mediaTitle" required>
-            <mat-error *ngIf="honeyMediaForm.get('mediaTitle')?.hasError('required')">
-              Media Title is required
-            </mat-error>
-          </mat-form-field>
+        <div class="form-content">
+          <div class="form-row">
+            <mat-form-field class="form-field-full">
+              <mat-label>Media Title *</mat-label>
+              <input matInput formControlName="mediaTitle" required>
+              <mat-error *ngIf="honeyMediaForm.get('mediaTitle')?.hasError('required')">
+                Media Title is required
+              </mat-error>
+            </mat-form-field>
+          </div>
 
-          <mat-form-field>
-            <mat-label>Pitch</mat-label>
-            <textarea matInput formControlName="pitch" rows="3"></textarea>
-          </mat-form-field>
+          <div class="form-row">
+            <mat-form-field class="form-field-full">
+              <mat-label>Pitch</mat-label>
+              <textarea matInput formControlName="pitch" rows="2"></textarea>
+            </mat-form-field>
+          </div>
 
-          <div fxLayout="row" fxLayoutGap="10px">
-            <mat-form-field fxFlex="50">
+          <div class="form-row">
+            <mat-form-field class="form-field-half">
               <mat-label>Media Type</mat-label>
               <mat-select formControlName="mediaTypeId">
                 <mat-option [value]="null">None</mat-option>
                 <mat-option *ngFor="let type of mediaTypes" [value]="type.id">
-                  {{ type.mediaTypeName }}
+                  <span class="option-with-color">
+                    <mat-chip *ngIf="type.color" [style.background-color]="type.color" [style.color]="getTextColor(type.color)" class="small-chip">
+                      {{ type.mediaTypeName }}
+                    </mat-chip>
+                    <span *ngIf="!type.color">{{ type.mediaTypeName }}</span>
+                  </span>
                 </mat-option>
               </mat-select>
             </mat-form-field>
 
-            <mat-form-field fxFlex="50">
+            <mat-form-field class="form-field-half">
               <mat-label>Interest Type</mat-label>
               <mat-select formControlName="interestTypeId">
                 <mat-option [value]="null">None</mat-option>
                 <mat-option *ngFor="let interest of mediaInterests" [value]="interest.id">
-                  {{ interest.interestTypeName }}
+                  <span class="option-with-color">
+                    <mat-chip *ngIf="interest.color" [style.background-color]="interest.color" [style.color]="getTextColor(interest.color)" class="small-chip">
+                      {{ interest.interestTypeName }}
+                    </mat-chip>
+                    <span *ngIf="!interest.color">{{ interest.interestTypeName }}</span>
+                  </span>
                 </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
 
-          <div fxLayout="row" fxLayoutGap="10px">
-            <mat-form-field fxFlex="50">
+          <div class="form-row">
+            <mat-form-field class="form-field-half">
               <mat-label>Requesting User</mat-label>
               <mat-select formControlName="requestingUserId">
                 <mat-option [value]="null">None</mat-option>
                 <mat-option *ngFor="let requester of mediaRequesters" [value]="requester.id">
-                  {{ requester.name }}
+                  <span class="option-with-color">
+                    <mat-chip *ngIf="requester.color" [style.background-color]="requester.color" [style.color]="getTextColor(requester.color)" class="small-chip">
+                      {{ requester.name }}
+                    </mat-chip>
+                    <span *ngIf="!requester.color">{{ requester.name }}</span>
+                  </span>
                 </mat-option>
               </mat-select>
             </mat-form-field>
 
-            <mat-form-field fxFlex="50">
+            <mat-form-field class="form-field-half">
               <mat-label>Response</mat-label>
               <mat-select formControlName="responseId">
                 <mat-option [value]="null">None</mat-option>
                 <mat-option *ngFor="let response of mediaResponses" [value]="response.id">
-                  {{ response.response }}
+                  <span class="option-with-color">
+                    <mat-chip *ngIf="response.color" [style.background-color]="response.color" [style.color]="getTextColor(response.color)" class="small-chip">
+                      {{ response.response }}
+                    </mat-chip>
+                    <span *ngIf="!response.color">{{ response.response }}</span>
+                  </span>
                 </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
 
-          <mat-form-field>
-            <mat-label>Status</mat-label>
-            <mat-select formControlName="statusId">
-              <mat-option [value]="null">None</mat-option>
-              <mat-option *ngFor="let status of mediaStatuses" [value]="status.id">
-                {{ status.status }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <div fxLayout="row" fxLayoutGap="10px">
-            <mat-form-field fxFlex="50">
-              <mat-label>Noelle Rating</mat-label>
-              <input matInput type="number" formControlName="noelleRating" min="0" max="10">
+          <div class="form-row">
+            <mat-form-field class="form-field-half">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="statusId">
+                <mat-option [value]="null">None</mat-option>
+                <mat-option *ngFor="let status of mediaStatuses" [value]="status.id">
+                  <span class="option-with-color">
+                    <mat-chip *ngIf="status.color" [style.background-color]="status.color" [style.color]="getTextColor(status.color)" class="small-chip">
+                      {{ status.status }}
+                    </mat-chip>
+                    <span *ngIf="!status.color">{{ status.status }}</span>
+                  </span>
+                </mat-option>
+              </mat-select>
             </mat-form-field>
 
-            <mat-form-field fxFlex="50">
-              <mat-label>Aaron Rating</mat-label>
-              <input matInput type="number" formControlName="aaronRating" min="0" max="10">
+            <div class="form-field-half" fxLayout="row" fxLayoutGap="10px">
+              <mat-form-field fxFlex="50">
+                <mat-label>Noelle Rating</mat-label>
+                <input matInput type="number" formControlName="noelleRating" min="0" max="5" step="0.5">
+                <mat-hint>0-5</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field fxFlex="50">
+                <mat-label>Aaron Rating</mat-label>
+                <input matInput type="number" formControlName="aaronRating" min="0" max="5" step="0.5">
+                <mat-hint>0-5</mat-hint>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field class="form-field-half">
+              <mat-label>Noelle Comment</mat-label>
+              <textarea matInput formControlName="noelleComment" rows="2"></textarea>
+            </mat-form-field>
+
+            <mat-form-field class="form-field-half">
+              <mat-label>Aaron Comment</mat-label>
+              <textarea matInput formControlName="aaronComment" rows="2"></textarea>
             </mat-form-field>
           </div>
 
-          <mat-form-field>
-            <mat-label>Noelle Comment</mat-label>
-            <textarea matInput formControlName="noelleComment" rows="3"></textarea>
-          </mat-form-field>
-
-          <mat-form-field>
-            <mat-label>Aaron Comment</mat-label>
-            <textarea matInput formControlName="aaronComment" rows="3"></textarea>
-          </mat-form-field>
-
-          <mat-form-field>
-            <mat-label>Tracker</mat-label>
-            <textarea matInput formControlName="tracker" rows="2"></textarea>
-          </mat-form-field>
-
-          <div fxLayout="row" fxLayoutGap="10px">
-            <mat-form-field fxFlex="50">
-              <mat-label>Date Requested</mat-label>
-              <input matInput type="date" formControlName="dateRequested">
+          <div class="form-row">
+            <mat-form-field class="form-field-half">
+              <mat-label>Tracker</mat-label>
+              <textarea matInput formControlName="tracker" rows="2"></textarea>
             </mat-form-field>
 
-            <mat-form-field fxFlex="50">
-              <mat-label>Date Finished</mat-label>
-              <input matInput type="date" formControlName="dateFinished">
-            </mat-form-field>
+            <div class="form-field-half" fxLayout="row" fxLayoutGap="10px">
+              <mat-form-field fxFlex="50">
+                <mat-label>Date Requested</mat-label>
+                <input matInput type="date" formControlName="dateRequested">
+              </mat-form-field>
+
+              <mat-form-field fxFlex="50">
+                <mat-label>Date Finished</mat-label>
+                <input matInput type="date" formControlName="dateFinished">
+              </mat-form-field>
+            </div>
           </div>
 
-          <div fxLayout="row" fxLayoutGap="10px" style="margin-top: 10px;">
+          <div class="form-actions">
             <button mat-raised-button type="submit" color="primary" [disabled]="!honeyMediaForm.valid || isLoading">
               {{ isEditing ? 'Update' : 'Create' }}
             </button>
@@ -139,8 +179,8 @@
           </div>
         </div>
       </form>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 
   <!-- Table Section -->
   <mat-card>
@@ -148,11 +188,6 @@
       <div class="table-container">
         <table mat-table [dataSource]="honeyMediaList" class="mat-elevation-z8" style="width: 100%;">
           
-          <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef>ID</th>
-            <td mat-cell *matCellDef="let item">{{ item.id }}</td>
-          </ng-container>
-
           <ng-container matColumnDef="mediaTitle">
             <th mat-header-cell *matHeaderCellDef>Title</th>
             <td mat-cell *matCellDef="let item">{{ item.mediaTitle }}</td>
@@ -160,42 +195,84 @@
 
           <ng-container matColumnDef="pitch">
             <th mat-header-cell *matHeaderCellDef>Pitch</th>
-            <td mat-cell *matCellDef="let item">{{ item.pitch || '-' }}</td>
+            <td mat-cell *matCellDef="let item" class="pitch-cell">{{ item.pitch || '-' }}</td>
           </ng-container>
 
           <ng-container matColumnDef="mediaTypeName">
             <th mat-header-cell *matHeaderCellDef>Type</th>
-            <td mat-cell *matCellDef="let item">{{ item.mediaTypeName || '-' }}</td>
+            <td mat-cell *matCellDef="let item">
+              <mat-chip *ngIf="item.mediaTypeName" 
+                        [style.background-color]="item.mediaTypeColor || '#e0e0e0'" 
+                        [style.color]="'#ffffff'"
+                        class="media-type-chip-white">
+                <span style="color: #ffffff !important;">{{ item.mediaTypeName }}</span>
+              </mat-chip>
+              <span *ngIf="!item.mediaTypeName">-</span>
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="interestTypeName">
             <th mat-header-cell *matHeaderCellDef>Interest</th>
-            <td mat-cell *matCellDef="let item">{{ item.interestTypeName || '-' }}</td>
+            <td mat-cell *matCellDef="let item">
+              <mat-chip *ngIf="item.interestTypeName" [style.background-color]="item.interestTypeColor || '#e0e0e0'" [style.color]="getTextColor(item.interestTypeColor)">
+                {{ item.interestTypeName }}
+              </mat-chip>
+              <span *ngIf="!item.interestTypeName">-</span>
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="requestingUserName">
             <th mat-header-cell *matHeaderCellDef>Requester</th>
-            <td mat-cell *matCellDef="let item">{{ item.requestingUserName || '-' }}</td>
+            <td mat-cell *matCellDef="let item">
+              <mat-chip *ngIf="item.requestingUserName" [style.background-color]="item.requestingUserColor || '#e0e0e0'" [style.color]="getTextColor(item.requestingUserColor)">
+                {{ item.requestingUserName }}
+              </mat-chip>
+              <span *ngIf="!item.requestingUserName">-</span>
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="response">
             <th mat-header-cell *matHeaderCellDef>Response</th>
-            <td mat-cell *matCellDef="let item">{{ item.response || '-' }}</td>
+            <td mat-cell *matCellDef="let item">
+              <mat-chip *ngIf="item.response" [style.background-color]="item.responseColor || '#e0e0e0'" [style.color]="getTextColor(item.responseColor)">
+                {{ item.response }}
+              </mat-chip>
+              <span *ngIf="!item.response">-</span>
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef>Status</th>
-            <td mat-cell *matCellDef="let item">{{ item.status || '-' }}</td>
+            <td mat-cell *matCellDef="let item">
+              <mat-chip *ngIf="item.status" [style.background-color]="item.statusColor || '#e0e0e0'" [style.color]="getTextColor(item.statusColor)">
+                {{ item.status }}
+              </mat-chip>
+              <span *ngIf="!item.status">-</span>
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="noelleRating">
             <th mat-header-cell *matHeaderCellDef>Noelle</th>
-            <td mat-cell *matCellDef="let item">{{ item.noelleRating || '-' }}</td>
+            <td mat-cell *matCellDef="let item">
+              <span class="star-rating">
+                <mat-icon *ngFor="let star of getStars(item.noelleRating)" [class.filled]="star.filled" [class.half]="star.half">
+                  {{ star.half ? 'star_half' : 'star' }}
+                </mat-icon>
+                <span *ngIf="!item.noelleRating && item.noelleRating !== 0" class="no-rating">-</span>
+              </span>
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="aaronRating">
             <th mat-header-cell *matHeaderCellDef>Aaron</th>
-            <td mat-cell *matCellDef="let item">{{ item.aaronRating || '-' }}</td>
+            <td mat-cell *matCellDef="let item">
+              <span class="star-rating">
+                <mat-icon *ngFor="let star of getStars(item.aaronRating)" [class.filled]="star.filled" [class.half]="star.half">
+                  {{ star.half ? 'star_half' : 'star' }}
+                </mat-icon>
+                <span *ngIf="!item.aaronRating && item.aaronRating !== 0" class="no-rating">-</span>
+              </span>
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="dateRequested">
@@ -221,10 +298,9 @@
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" [style.background-color]="getRowBackgroundColor(row.status)"></tr>
         </table>
       </div>
     </mat-card-content>
   </mat-card>
 </div>
-

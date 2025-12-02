@@ -7,14 +7,19 @@ export interface HoneyMediaDTO {
   pitch?: string;
   mediaTypeId?: number;
   mediaTypeName?: string;
+  mediaTypeColor?: string;
   interestTypeId?: number;
   interestTypeName?: string;
+  interestTypeColor?: string;
   requestingUserId?: number;
   requestingUserName?: string;
+  requestingUserColor?: string;
   responseId?: number;
   response?: string;
+  responseColor?: string;
   statusId?: number;
   status?: string;
+  statusColor?: string;
   noelleRating?: number;
   aaronRating?: number;
   noelleComment?: string;
@@ -28,26 +33,31 @@ export interface HoneyMediaDTO {
 export interface MediaTypeDTO {
   id: number;
   mediaTypeName?: string;
+  color?: string;
 }
 
 export interface MediaInterestDTO {
   id: number;
   interestTypeName?: string;
+  color?: string;
 }
 
 export interface MediaRequesterDTO {
   id: number;
   name?: string;
+  color?: string;
 }
 
 export interface MediaResponseDTO {
   id: number;
   response?: string;
+  color?: string;
 }
 
 export interface MediaStatusDTO {
   id: number;
   status?: string;
+  color?: string;
 }
 
 @Injectable({ providedIn: 'root' })

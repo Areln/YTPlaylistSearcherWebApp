@@ -14,6 +14,7 @@ namespace YTPlaylistSearcherWebApp.Models
 
         public int Id { get; set; }
         public string? Status { get; set; }
+        public string? Color { get; set; }
 
         public virtual ICollection<Honeymedia> Honeymedia { get; set; }
     }

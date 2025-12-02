@@ -75,31 +75,31 @@ namespace YTPlaylistSearcherWebApp.Services
         public async Task<IEnumerable<MediaTypeDTO>> GetMediaTypes(YTPSContext context)
         {
             var entities = await _honeyMediaRepository.GetMediaTypes(context);
-            return entities.Select(x => new MediaTypeDTO { Id = x.Id, MediaTypeName = x.MediaTypeName });
+            return entities.Select(x => new MediaTypeDTO { Id = x.Id, MediaTypeName = x.MediaTypeName, Color = x.Color });
         }
 
         public async Task<IEnumerable<MediaInterestDTO>> GetMediaInterests(YTPSContext context)
         {
             var entities = await _honeyMediaRepository.GetMediaInterests(context);
-            return entities.Select(x => new MediaInterestDTO { Id = x.Id, InterestTypeName = x.InterestTypeName });
+            return entities.Select(x => new MediaInterestDTO { Id = x.Id, InterestTypeName = x.InterestTypeName, Color = x.Color });
         }
 
         public async Task<IEnumerable<MediaRequesterDTO>> GetMediaRequesters(YTPSContext context)
         {
             var entities = await _honeyMediaRepository.GetMediaRequesters(context);
-            return entities.Select(x => new MediaRequesterDTO { Id = x.Id, Name = x.Name });
+            return entities.Select(x => new MediaRequesterDTO { Id = x.Id, Name = x.Name, Color = x.Color });
         }
 
         public async Task<IEnumerable<MediaResponseDTO>> GetMediaResponses(YTPSContext context)
         {
             var entities = await _honeyMediaRepository.GetMediaResponses(context);
-            return entities.Select(x => new MediaResponseDTO { Id = x.Id, Response = x.Response });
+            return entities.Select(x => new MediaResponseDTO { Id = x.Id, Response = x.Response, Color = x.Color });
         }
 
         public async Task<IEnumerable<MediaStatusDTO>> GetMediaStatuses(YTPSContext context)
         {
             var entities = await _honeyMediaRepository.GetMediaStatuses(context);
-            return entities.Select(x => new MediaStatusDTO { Id = x.Id, Status = x.Status });
+            return entities.Select(x => new MediaStatusDTO { Id = x.Id, Status = x.Status, Color = x.Color });
         }
 
         private static HoneyMediaDTO MapToDTO(Honeymedia entity)
@@ -111,14 +111,19 @@ namespace YTPlaylistSearcherWebApp.Services
                 Pitch = entity.Pitch,
                 MediaTypeId = entity.MediaTypeId,
                 MediaTypeName = entity.MediaType?.MediaTypeName,
+                MediaTypeColor = entity.MediaType?.Color,
                 InterestTypeId = entity.InterestTypeId,
                 InterestTypeName = entity.InterestType?.InterestTypeName,
+                InterestTypeColor = entity.InterestType?.Color,
                 RequestingUserId = entity.RequestingUserId,
                 RequestingUserName = entity.RequestingUser?.Name,
+                RequestingUserColor = entity.RequestingUser?.Color,
                 ResponseId = entity.ResponseId,
                 Response = entity.Response?.Response,
+                ResponseColor = entity.Response?.Color,
                 StatusId = entity.StatusId,
                 Status = entity.Status?.Status,
+                StatusColor = entity.Status?.Color,
                 NoelleRating = entity.NoelleRating,
                 AaronRating = entity.AaronRating,
                 NoelleComment = entity.NoelleComment,

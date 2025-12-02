@@ -10,7 +10,7 @@ import { HoneyMediaService, HoneyMediaDTO, MediaTypeDTO, MediaInterestDTO, Media
 export class HoneyMediaComponent implements OnInit {
   honeyMediaList: HoneyMediaDTO[] = [];
   displayedColumns: string[] = [
-    'id', 'mediaTitle', 'pitch', 'mediaTypeName', 'interestTypeName',
+    'mediaTitle', 'pitch', 'mediaTypeName', 'interestTypeName',
     'requestingUserName', 'response', 'status', 'noelleRating', 'aaronRating',
     'dateRequested', 'dateFinished', 'actions'
   ];
@@ -41,8 +41,8 @@ export class HoneyMediaComponent implements OnInit {
       requestingUserId: [null],
       responseId: [null],
       statusId: [null],
-      noelleRating: [null],
-      aaronRating: [null],
+      noelleRating: [null, [Validators.min(0), Validators.max(5)]],
+      aaronRating: [null, [Validators.min(0), Validators.max(5)]],
       noelleComment: [''],
       aaronComment: [''],
       tracker: [''],
@@ -61,7 +61,7 @@ export class HoneyMediaComponent implements OnInit {
     this.errorMessage = null;
     this.honeyMediaService.getAll().subscribe({
       next: (data) => {
-        this.honeyMediaList = data;
+        this.honeyMediaList = this.sortByStatus(data);
         this.isLoading = false;
       },
       error: (error) => {
@@ -69,6 +69,27 @@ export class HoneyMediaComponent implements OnInit {
         this.errorMessage = 'Error loading data. Please try again.';
         this.isLoading = false;
       }
+    });
+  }
+
+  sortByStatus(data: HoneyMediaDTO[]): HoneyMediaDTO[] {
+    const statusOrder: { [key: string]: number } = {
+      'in progress': 1,
+      'inprogress': 1,
+      'tbd bro': 2,
+      'tbd': 2,
+      'finished': 3,
+      'dropped': 4
+    };
+
+    return [...data].sort((a, b) => {
+      const statusA = (a.status || '').toLowerCase().trim();
+      const statusB = (b.status || '').toLowerCase().trim();
+      
+      const orderA = statusOrder[statusA] || 999;
+      const orderB = statusOrder[statusB] || 999;
+      
+      return orderA - orderB;
     });
   }
 
@@ -189,6 +210,90 @@ export class HoneyMediaComponent implements OnInit {
     if (!date) return '';
     const d = new Date(date);
     return d.toLocaleDateString();
+  }
+
+  getColorForMediaType(id: number | null | undefined): string | undefined {
+    if (!id) return undefined;
+    return this.mediaTypes.find(t => t.id === id)?.color;
+  }
+
+  getColorForInterestType(id: number | null | undefined): string | undefined {
+    if (!id) return undefined;
+    return this.mediaInterests.find(i => i.id === id)?.color;
+  }
+
+  getColorForRequester(id: number | null | undefined): string | undefined {
+    if (!id) return undefined;
+    return this.mediaRequesters.find(r => r.id === id)?.color;
+  }
+
+  getColorForResponse(id: number | null | undefined): string | undefined {
+    if (!id) return undefined;
+    return this.mediaResponses.find(r => r.id === id)?.color;
+  }
+
+  getColorForStatus(id: number | null | undefined): string | undefined {
+    if (!id) return undefined;
+    return this.mediaStatuses.find(s => s.id === id)?.color;
+  }
+
+  getRowBackgroundColor(status: string | null | undefined): string {
+    if (!status) return '';
+    const statusLower = status.toLowerCase().trim();
+    // Handle "TBD" or "TBD bro" variations
+    if (statusLower === 'tbd' || statusLower.startsWith('tbd')) {
+      return '#fff2cc';
+    } else if (statusLower === 'finished') {
+      return '#cfe2f3';
+    } else if (statusLower === 'dropped') {
+      return '#999999';
+    } else if (statusLower === 'in progress' || statusLower === 'inprogress') {
+      return '#fdf1ff';
+    }
+    return '';
+  }
+
+  getTextColor(backgroundColor: string | null | undefined): string {
+    if (!backgroundColor) return '#000000';
+    // Convert hex to RGB
+    const hex = backgroundColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    // Calculate luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    // Return black for light colors, white for dark colors
+    return luminance > 0.5 ? '#000000' : '#ffffff';
+  }
+
+  getStars(rating: number | null | undefined): Array<{ filled: boolean; half: boolean }> {
+    const stars: Array<{ filled: boolean; half: boolean }> = [];
+    if (rating === null || rating === undefined) {
+      return stars;
+    }
+    
+    // Clamp rating between 0 and 5
+    const clampedRating = Math.max(0, Math.min(5, rating));
+    const fullStars = Math.floor(clampedRating);
+    const hasHalfStar = clampedRating % 1 >= 0.5;
+    
+    // Add filled stars
+    for (let i = 0; i < fullStars; i++) {
+      stars.push({ filled: true, half: false });
+    }
+    
+    // Add half star if needed
+    if (hasHalfStar && fullStars < 5) {
+      stars.push({ filled: false, half: true });
+    }
+    
+    // Add empty stars to make total 5
+    const totalStars = fullStars + (hasHalfStar ? 1 : 0);
+    for (let i = totalStars; i < 5; i++) {
+      stars.push({ filled: false, half: false });
+    }
+    
+    return stars;
   }
 }
 

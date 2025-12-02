@@ -20,6 +20,8 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
             entity.HasIndex(e => e.Id, "Id_UNIQUE")
                 .IsUnique();
 
+            entity.Property(e => e.Color).HasMaxLength(45);
+
             entity.Property(e => e.MediaTypeName).HasMaxLength(45);
 
             OnConfigurePartial(entity);
