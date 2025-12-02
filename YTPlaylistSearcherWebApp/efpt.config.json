@@ -24,6 +24,30 @@
          "ObjectType": 0
       },
       {
+         "Name": "honeymedia",
+         "ObjectType": 0
+      },
+      {
+         "Name": "mediainterest",
+         "ObjectType": 0
+      },
+      {
+         "Name": "mediarequester",
+         "ObjectType": 0
+      },
+      {
+         "Name": "mediaresponse",
+         "ObjectType": 0
+      },
+      {
+         "Name": "mediastatus",
+         "ObjectType": 0
+      },
+      {
+         "Name": "mediatype",
+         "ObjectType": 0
+      },
+      {
          "Name": "playlists",
          "ObjectType": 0
       },

@@ -20,6 +20,9 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   imports: [
@@ -49,7 +52,10 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatPaginatorModule,
     MatTabsModule,
     MatGridListModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSelectModule,
+    MatChipsModule,
+    MatProgressSpinnerModule
   ]
 })
 export class SharedModule { }

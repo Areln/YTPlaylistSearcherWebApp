@@ -30,8 +30,7 @@ namespace YTPlaylistSearcherWebApp.Data.Configurations
                 .HasMaxLength(400)
                 .HasColumnName("description");
 
-            // 5/22/2024: this column is no longer used
-            //entity.Property(e => e.PublishedDate).HasColumnType("datetime");
+            entity.Property(e => e.PublishedDate).HasColumnType("datetime");
 
             entity.Property(e => e.Thumbnail)
                 .HasMaxLength(150)

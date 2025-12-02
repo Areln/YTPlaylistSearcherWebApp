@@ -50,6 +50,8 @@ builder.Services.AddTransient<ILineUpsRepository, LineUpsRepository>();
 builder.Services.AddTransient<ILoginService, LoginService>();
 builder.Services.AddTransient<ILoginRepository, LoginRepository>();
 builder.Services.AddTransient<ITokenService, TokenService>();
+builder.Services.AddTransient<IHoneyMediaService, HoneyMediaService>();
+builder.Services.AddTransient<IHoneyMediaRepository, HoneyMediaRepository>();
 
 builder.Services.AddDbContext<YTPSContext>(options => options.UseMySql(builder.Configuration.GetValue<string>("ConnectionStringYTPS"), ServerVersion.Create(1, 0, 0, Pomelo.EntityFrameworkCore.MySql.Infrastructure.ServerType.MySql)));
 builder.Services.AddDbContext<CSContext>(options => options.UseMySql(builder.Configuration.GetValue<string>("ConnectionStringCS"), ServerVersion.Create(1, 0, 0, Pomelo.EntityFrameworkCore.MySql.Infrastructure.ServerType.MySql)));

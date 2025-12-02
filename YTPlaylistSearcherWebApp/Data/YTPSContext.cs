@@ -22,6 +22,12 @@ namespace YTPlaylistSearcherWebApp.Data
 
         public virtual DbSet<Accountstatus> Accountstatuses { get; set; } = null!;
         public virtual DbSet<Follower> Followers { get; set; } = null!;
+        public virtual DbSet<Honeymedia> Honeymedia { get; set; } = null!;
+        public virtual DbSet<Mediainterest> Mediainterests { get; set; } = null!;
+        public virtual DbSet<Mediarequester> Mediarequesters { get; set; } = null!;
+        public virtual DbSet<Mediaresponse> Mediaresponses { get; set; } = null!;
+        public virtual DbSet<Mediastatus> Mediastatuses { get; set; } = null!;
+        public virtual DbSet<Mediatype> Mediatypes { get; set; } = null!;
         public virtual DbSet<Playlist> Playlists { get; set; } = null!;
         public virtual DbSet<Playlistsearchhistory> Playlistsearchhistories { get; set; } = null!;
         public virtual DbSet<Playlistvideo> Playlistvideos { get; set; } = null!;
@@ -41,6 +47,12 @@ namespace YTPlaylistSearcherWebApp.Data
 
             modelBuilder.ApplyConfiguration(new Configurations.AccountstatusConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.FollowerConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.HoneymediaConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.MediainterestConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.MediarequesterConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.MediaresponseConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.MediastatusConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.MediatypeConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.PlaylistConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.PlaylistsearchhistoryConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.PlaylistvideoConfiguration());

@@ -28,8 +28,9 @@ import { SafePipe } from './safe.pipe';
 import { CommentSectionComponent } from './shared/comment-section/comment-section.component';
 import { TokenInterceptor } from '../TokenInterceptor';
 import { ProfileComponent } from './profile/profile.component';
-import { SearchSubmitComponent } from './search-submit/search-submit.component';
+// import { SearchSubmitComponent } from './search-submit/search-submit.component';
 import { VideoPlayerComponent } from './video-player/video-player.component';
+import { HoneyMediaComponent } from './honey-media/honey-media.component';
 
 export function tokenGetter() {
   return localStorage.getItem("jwt");
@@ -56,8 +57,9 @@ export function tokenGetter() {
     SafePipe,
     CommentSectionComponent,
     ProfileComponent,
-    SearchSubmitComponent,
-    VideoPlayerComponent
+    // SearchSubmitComponent,
+    VideoPlayerComponent,
+    HoneyMediaComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -78,8 +80,9 @@ export function tokenGetter() {
       { path: 'cs/lineups', component: CounterStrikeLineUpsSearchComponent, canActivate: [AuthGuard] },
       { path: 'shared', component: SharedPostsFeedComponent, canActivate: [AuthGuard] },
       { path: 'discover', component: DiscoverSearchComponent, canActivate: [AuthGuard] },
-      { path: 'submit-search', component: SearchSubmitComponent, canActivate: [AuthGuard] },
-      { path: 'video-player/:type/:id', component: VideoPlayerComponent, canActivate: [AuthGuard] }
+      // { path: 'submit-search', component: SearchSubmitComponent, canActivate: [AuthGuard] },
+      { path: 'video-player/:type/:id', component: VideoPlayerComponent, canActivate: [AuthGuard] },
+      { path: 'honey-media', component: HoneyMediaComponent }
       //{ path: 'counter', component: CounterComponent },
       //{ path: 'fetch-data', component: FetchDataComponent },
 

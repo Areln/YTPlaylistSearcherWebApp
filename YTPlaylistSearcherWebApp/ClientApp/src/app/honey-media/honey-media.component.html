@@ -1,0 +1,230 @@
+<div fxLayout="column" style="padding: 20px;">
+  <h1>Honey Media Management</h1>
+
+  <div *ngIf="isLoading" style="margin-bottom: 20px;">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <div *ngIf="errorMessage" style="color: red; margin-bottom: 20px;">
+    {{ errorMessage }}
+  </div>
+
+  <div fxLayout="row" style="margin-bottom: 20px;">
+    <button mat-raised-button color="primary" (click)="openAddForm()" *ngIf="!showForm">
+      Add New Entry
+    </button>
+  </div>
+
+  <!-- Form Section -->
+  <mat-card *ngIf="showForm" style="margin-bottom: 20px;">
+    <mat-card-header>
+      <mat-card-title>{{ isEditing ? 'Edit Entry' : 'Add New Entry' }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="honeyMediaForm" (ngSubmit)="onSubmit()">
+        <div fxLayout="column" fxLayoutGap="10px">
+          <mat-form-field>
+            <mat-label>Media Title *</mat-label>
+            <input matInput formControlName="mediaTitle" required>
+            <mat-error *ngIf="honeyMediaForm.get('mediaTitle')?.hasError('required')">
+              Media Title is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Pitch</mat-label>
+            <textarea matInput formControlName="pitch" rows="3"></textarea>
+          </mat-form-field>
+
+          <div fxLayout="row" fxLayoutGap="10px">
+            <mat-form-field fxFlex="50">
+              <mat-label>Media Type</mat-label>
+              <mat-select formControlName="mediaTypeId">
+                <mat-option [value]="null">None</mat-option>
+                <mat-option *ngFor="let type of mediaTypes" [value]="type.id">
+                  {{ type.mediaTypeName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field fxFlex="50">
+              <mat-label>Interest Type</mat-label>
+              <mat-select formControlName="interestTypeId">
+                <mat-option [value]="null">None</mat-option>
+                <mat-option *ngFor="let interest of mediaInterests" [value]="interest.id">
+                  {{ interest.interestTypeName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div fxLayout="row" fxLayoutGap="10px">
+            <mat-form-field fxFlex="50">
+              <mat-label>Requesting User</mat-label>
+              <mat-select formControlName="requestingUserId">
+                <mat-option [value]="null">None</mat-option>
+                <mat-option *ngFor="let requester of mediaRequesters" [value]="requester.id">
+                  {{ requester.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field fxFlex="50">
+              <mat-label>Response</mat-label>
+              <mat-select formControlName="responseId">
+                <mat-option [value]="null">None</mat-option>
+                <mat-option *ngFor="let response of mediaResponses" [value]="response.id">
+                  {{ response.response }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field>
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="statusId">
+              <mat-option [value]="null">None</mat-option>
+              <mat-option *ngFor="let status of mediaStatuses" [value]="status.id">
+                {{ status.status }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div fxLayout="row" fxLayoutGap="10px">
+            <mat-form-field fxFlex="50">
+              <mat-label>Noelle Rating</mat-label>
+              <input matInput type="number" formControlName="noelleRating" min="0" max="10">
+            </mat-form-field>
+
+            <mat-form-field fxFlex="50">
+              <mat-label>Aaron Rating</mat-label>
+              <input matInput type="number" formControlName="aaronRating" min="0" max="10">
+            </mat-form-field>
+          </div>
+
+          <mat-form-field>
+            <mat-label>Noelle Comment</mat-label>
+            <textarea matInput formControlName="noelleComment" rows="3"></textarea>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Aaron Comment</mat-label>
+            <textarea matInput formControlName="aaronComment" rows="3"></textarea>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Tracker</mat-label>
+            <textarea matInput formControlName="tracker" rows="2"></textarea>
+          </mat-form-field>
+
+          <div fxLayout="row" fxLayoutGap="10px">
+            <mat-form-field fxFlex="50">
+              <mat-label>Date Requested</mat-label>
+              <input matInput type="date" formControlName="dateRequested">
+            </mat-form-field>
+
+            <mat-form-field fxFlex="50">
+              <mat-label>Date Finished</mat-label>
+              <input matInput type="date" formControlName="dateFinished">
+            </mat-form-field>
+          </div>
+
+          <div fxLayout="row" fxLayoutGap="10px" style="margin-top: 10px;">
+            <button mat-raised-button type="submit" color="primary" [disabled]="!honeyMediaForm.valid || isLoading">
+              {{ isEditing ? 'Update' : 'Create' }}
+            </button>
+            <button mat-raised-button type="button" (click)="cancelForm()" [disabled]="isLoading">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Table Section -->
+  <mat-card>
+    <mat-card-content>
+      <div class="table-container">
+        <table mat-table [dataSource]="honeyMediaList" class="mat-elevation-z8" style="width: 100%;">
+          
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let item">{{ item.id }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="mediaTitle">
+            <th mat-header-cell *matHeaderCellDef>Title</th>
+            <td mat-cell *matCellDef="let item">{{ item.mediaTitle }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="pitch">
+            <th mat-header-cell *matHeaderCellDef>Pitch</th>
+            <td mat-cell *matCellDef="let item">{{ item.pitch || '-' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="mediaTypeName">
+            <th mat-header-cell *matHeaderCellDef>Type</th>
+            <td mat-cell *matCellDef="let item">{{ item.mediaTypeName || '-' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="interestTypeName">
+            <th mat-header-cell *matHeaderCellDef>Interest</th>
+            <td mat-cell *matCellDef="let item">{{ item.interestTypeName || '-' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="requestingUserName">
+            <th mat-header-cell *matHeaderCellDef>Requester</th>
+            <td mat-cell *matCellDef="let item">{{ item.requestingUserName || '-' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="response">
+            <th mat-header-cell *matHeaderCellDef>Response</th>
+            <td mat-cell *matCellDef="let item">{{ item.response || '-' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let item">{{ item.status || '-' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="noelleRating">
+            <th mat-header-cell *matHeaderCellDef>Noelle</th>
+            <td mat-cell *matCellDef="let item">{{ item.noelleRating || '-' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="aaronRating">
+            <th mat-header-cell *matHeaderCellDef>Aaron</th>
+            <td mat-cell *matCellDef="let item">{{ item.aaronRating || '-' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="dateRequested">
+            <th mat-header-cell *matHeaderCellDef>Requested</th>
+            <td mat-cell *matCellDef="let item">{{ formatDate(item.dateRequested) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="dateFinished">
+            <th mat-header-cell *matHeaderCellDef>Finished</th>
+            <td mat-cell *matCellDef="let item">{{ formatDate(item.dateFinished) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let item">
+              <button mat-icon-button color="primary" (click)="openEditForm(item)" title="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteItem(item.id)" title="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+

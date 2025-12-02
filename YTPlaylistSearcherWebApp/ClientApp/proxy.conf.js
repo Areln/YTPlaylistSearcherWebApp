@@ -9,6 +9,7 @@ const PROXY_CONFIG = [
       "/weatherforecast",
       "/playlist",
       "/lineups",
+      "/honeymedia",
       "/environment",
       "/login",
       "/debug",
